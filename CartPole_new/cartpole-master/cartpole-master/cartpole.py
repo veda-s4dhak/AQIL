@@ -5,7 +5,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-import getch
+import sys, termios, tty, os, time
 
 # from scores.score_logger import ScoreLogger
 
@@ -21,6 +21,17 @@ EXPLORATION_MAX = 1.0
 EXPLORATION_MIN = 0.01
 EXPLORATION_DECAY = 0.995
 
+
+def getch():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 class DQNSolver:
 
@@ -79,6 +90,7 @@ def cartpole():
 
         # User input init to invalid value
         user_input = -1
+        action = 0
         while True:
 
             # Rendering the ste[
@@ -86,15 +98,22 @@ def cartpole():
             env.render()
 
             # Getting user input
-            while (user_input != 1) and (user_input != 0):
+            while (user_input != 1) and (user_input != 2):
+
                 print("please enter an input")
-                try:
-                    user_input = int(getch.getche())
-                except:
-                    pass
+                # try:
+                user_input = int(getch())
+                print("user_input: {}".format(user_input))
+
+                if user_input == 1:
+                    action = 1
+                elif user_input == 2:
+                    action = 0
+                # except:
+                    # pass
 
             # Computing the state
-            action = dqn_solver.act(state) #user_input
+            # action = dqn_solver.act(state)
             state_next, reward, terminal, info = env.step(action)
             reward = reward if not terminal else -reward
             state_next = np.reshape(state_next, [1, observation_space])
@@ -112,6 +131,8 @@ def cartpole():
 
             # Getting ready for next state
             print("Reward: {}".format(reward))
+
+            user_input = -1
 
 
 if __name__ == "__main__":
