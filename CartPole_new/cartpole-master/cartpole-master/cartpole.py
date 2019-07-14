@@ -65,6 +65,8 @@ def cartpole():
     # score_logger = ScoreLogger(ENV_NAME)
     observation_space = env.observation_space.shape[0]
     action_space = env.action_space.n
+    print("Action Space Length: {}".format(action_space))
+    print("Action Space: {}".format(env.action_space))
     dqn_solver = DQNSolver(observation_space, action_space)
     run = 0
     while True:
@@ -75,17 +77,22 @@ def cartpole():
         while True:
             step += 1
             env.render()
-            action = dqn_solver.act(state)
-            state_next, reward, terminal, info = env.step(action)
-            reward = reward if not terminal else -reward
-            state_next = np.reshape(state_next, [1, observation_space])
-            dqn_solver.remember(state, action, reward, state_next, terminal)
-            state = state_next
-            if terminal:
-                print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
-                #score_logger.add_score(step, run)
-                break
-            dqn_solver.experience_replay()
+            print("please enter an input")
+            user_input = int(input())
+            while (user_input == 1) or (user_input == 0):            
+            	action = user_input#dqn_solver.act(state)
+            	state_next, reward, terminal, info = env.step(action)
+            	reward = reward if not terminal else -reward
+            	state_next = np.reshape(state_next, [1, observation_space])
+            	dqn_solver.remember(state, action, reward, state_next, terminal)
+            	state = state_next
+            	if terminal:
+                	print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
+                	#score_logger.add_score(step, run)
+                	break
+            	dqn_solver.experience_replay()
+            	print("Reward: {}".format(reward))
+            	user_input = -1
 
 
 if __name__ == "__main__":
