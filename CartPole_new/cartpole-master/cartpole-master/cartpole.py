@@ -5,7 +5,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
-
+import getch
 
 # from scores.score_logger import ScoreLogger
 
@@ -70,29 +70,48 @@ def cartpole():
     dqn_solver = DQNSolver(observation_space, action_space)
     run = 0
     while True:
+
+        # Environment reset
         run += 1
         state = env.reset()
         state = np.reshape(state, [1, observation_space])
         step = 0
+
+        # User input init to invalid value
+        user_input = -1
         while True:
+
+            # Rendering the ste[
             step += 1
             env.render()
-            print("please enter an input")
-            user_input = int(input())
-            while (user_input == 1) or (user_input == 0):            
-            	action = user_input#dqn_solver.act(state)
-            	state_next, reward, terminal, info = env.step(action)
-            	reward = reward if not terminal else -reward
-            	state_next = np.reshape(state_next, [1, observation_space])
-            	dqn_solver.remember(state, action, reward, state_next, terminal)
-            	state = state_next
-            	if terminal:
-                	print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
-                	#score_logger.add_score(step, run)
-                	break
-            	dqn_solver.experience_replay()
-            	print("Reward: {}".format(reward))
-            	user_input = -1
+
+            # Getting user input
+            while (user_input != 1) and (user_input != 0):
+                print("please enter an input")
+                try:
+                    user_input = int(getch.getche())
+                except:
+                    pass
+
+            # Computing the state
+            action = dqn_solver.act(state) #user_input
+            state_next, reward, terminal, info = env.step(action)
+            reward = reward if not terminal else -reward
+            state_next = np.reshape(state_next, [1, observation_space])
+            dqn_solver.remember(state, action, reward, state_next, terminal)
+            state = state_next
+
+            # Checking if game over
+            if terminal:
+                print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
+                #score_logger.add_score(step, run)
+                break
+
+            # Post processing
+            dqn_solver.experience_replay()
+
+            # Getting ready for next state
+            print("Reward: {}".format(reward))
 
 
 if __name__ == "__main__":
