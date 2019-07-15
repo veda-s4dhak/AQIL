@@ -6,6 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 import sys, termios, tty, os, time
+from CartPole_v1 import CartPoleEnv
 
 # from scores.score_logger import ScoreLogger
 
@@ -72,7 +73,8 @@ class DQNSolver:
 
 
 def cartpole():
-    env = gym.make(ENV_NAME)
+    # env = gym.make(ENV_NAME)
+    env = CartPoleEnv()
     # score_logger = ScoreLogger(ENV_NAME)
     observation_space = env.observation_space.shape[0]
     action_space = env.action_space.n
@@ -98,22 +100,22 @@ def cartpole():
             env.render()
 
             # Getting user input
-            while (user_input != 1) and (user_input != 2):
-
-                print("please enter an input")
-                # try:
-                user_input = int(getch())
-                print("user_input: {}".format(user_input))
-
-                if user_input == 1:
-                    action = 1
-                elif user_input == 2:
-                    action = 0
-                # except:
-                    # pass
+            # while (user_input != 1) and (user_input != 2):
+            #
+            #     print("please enter an input")
+            #     # try:
+            #     user_input = int(getch())
+            #     print("user_input: {}".format(user_input))
+            #
+            #     if user_input == 1:
+            #         action = 1
+            #     elif user_input == 2:
+            #         action = 0
+            #     # except:
+            #         # pass
 
             # Computing the state
-            # action = dqn_solver.act(state)
+            action = dqn_solver.act(state)
             state_next, reward, terminal, info = env.step(action)
             reward = reward if not terminal else -reward
             state_next = np.reshape(state_next, [1, observation_space])
