@@ -38,6 +38,9 @@ def getch():
 
 class DQNSolver:
 
+    # q_values is the output of the neural network given a state also they
+    # are also the labels during training in experience replay
+
     def __init__(self, observation_space, action_space):
         self.exploration_rate = EXPLORATION_MAX
 
@@ -50,9 +53,9 @@ class DQNSolver:
         self.model.add(Dense(self.action_space, activation="linear"))
         self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 
-        self.save_path = os.path.join(".", "model.h5")
-        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=True, mode='min')
-        self.callbacks_list = [self.checkpoint]
+        # self.save_path = os.path.join(".", "model.h5")
+        # self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=False, mode='min')
+        # self.callbacks_list = [self.checkpoint]
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -70,10 +73,22 @@ class DQNSolver:
         for state, action, reward, state_next, terminal in batch:
             q_update = reward
             if not terminal:
-                q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0]))
+                q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0])) # Bellman
+
+            # Output of the neural network (q values) given the state
             q_values = self.model.predict(state)
+
+            # Action is the action which was taken in the state within the episde
+            # This action is/was thought to be the optmail action before training
+            # This action gets updated with the new reward.
+            print("Predicted q: {}".format(q_values))
             q_values[0][action] = q_update
+            print("Target q: {}".format(q_values))
+
+            # Backpropagation based on the current experience
+            # Note: at this point your q_value are your labels
             self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
+
         self.exploration_rate *= EXPLORATION_DECAY
         self.exploration_rate = max(EXPLORATION_MIN, self.exploration_rate)
 
@@ -128,7 +143,7 @@ def cartpole():
             env.machine_action = machine_action
 
             # Setting the action to machine or use
-            action = user_action
+            action = machine_action#user_action
 
             # Printing actions
             print("User Action: {} Machine Action: {} Action: {}".format(user_action, machine_action, action))
