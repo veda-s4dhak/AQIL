@@ -1,6 +1,7 @@
 import random
 import gym
 import numpy as np
+import tensorflow as tf
 import os
 from collections import deque
 from keras.models import Sequential
@@ -10,6 +11,9 @@ import sys, termios, tty, os, time
 from CartPole_v1 import CartPoleEnv
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+import keras
+from datetime import datetime
+
 
 # from scores.score_logger import ScoreLogger
 
@@ -48,6 +52,9 @@ class DQNSolver:
         self.action_space = action_space
         self.memory = deque(maxlen=MEMORY_SIZE)
 
+        self.logdir = os.path.join('.', "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S"))
+        self.tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.logdir)
+
         if not os.path.exists(os.path.join(".", "model.h5")):
             self.model = Sequential()
             self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
@@ -60,7 +67,7 @@ class DQNSolver:
 
         self.save_path = os.path.join(".", "model.h5")
         self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=False, mode='min')
-        self.callbacks_list = [self.checkpoint]
+        self.callbacks_list = [self.checkpoint, self.tensorboard_callback]
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))

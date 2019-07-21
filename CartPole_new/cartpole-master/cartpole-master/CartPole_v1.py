@@ -120,8 +120,8 @@ class CartPoleEnv(gym.Env):
             # reward = 1.0 / abs(theta + 1e-5)
             # reward = 1.0 / (abs(action - self.machine_action) + 1e-5)
 
-            reward = self.gaussian_function(theta, np.deg2rad(6), 0)
-            # reward = self.gaussian_function(x=self.machine_action, sigma=np.deg2rad(1.0), mu=action)
+            # reward = self.gaussian_function(theta, np.deg2rad(6), 0)
+            reward = self.gaussian_function(x=self.machine_action, sigma=0.5, mu=action)
 
         elif self.steps_beyond_done is None:
             # Pole just fell!
