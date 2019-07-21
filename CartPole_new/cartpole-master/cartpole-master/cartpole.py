@@ -1,12 +1,14 @@
 import random
 import gym
 import numpy as np
+import os
 from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 import sys, termios, tty, os, time
 from CartPole_v1 import CartPoleEnv
+from keras.callbacks import ModelCheckpoint
 
 # from scores.score_logger import ScoreLogger
 
@@ -48,6 +50,10 @@ class DQNSolver:
         self.model.add(Dense(self.action_space, activation="linear"))
         self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
 
+        self.save_path = os.path.join(".", "model.h5")
+        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=True, mode='min')
+        self.callbacks_list = [self.checkpoint]
+
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
@@ -67,7 +73,7 @@ class DQNSolver:
                 q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0]))
             q_values = self.model.predict(state)
             q_values[0][action] = q_update
-            self.model.fit(state, q_values, verbose=0)
+            self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
         self.exploration_rate *= EXPLORATION_DECAY
         self.exploration_rate = max(EXPLORATION_MIN, self.exploration_rate)
 
@@ -82,6 +88,9 @@ def cartpole():
     print("Action Space: {}".format(env.action_space))
     dqn_solver = DQNSolver(observation_space, action_space)
     run = 0
+
+
+
     while True:
 
         # Environment reset
