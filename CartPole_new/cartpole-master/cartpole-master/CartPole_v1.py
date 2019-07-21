@@ -50,6 +50,9 @@ class CartPoleEnv(gym.Env):
     }
 
     def __init__(self):
+
+        self.machine_action = 0
+
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -84,6 +87,7 @@ class CartPoleEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
+    # Action could be user action or machine action
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
         state = self.state
@@ -114,7 +118,12 @@ class CartPoleEnv(gym.Env):
 
         if not done:
             # reward = 1.0 / abs(theta + 1e-5)
-            reward = self.gaussian_function(theta, np.deg2rad(6), 0)
+            # reward = 1.0 / (abs(action - self.machine_action) + 1e-5)
+
+
+            # reward = self.gaussian_function(theta, np.deg2rad(6), 0)
+            reward = self.gaussian_function(x=self.machine_action, sigma=np.deg2rad(1.0), mu=action)
+
         elif self.steps_beyond_done is None:
             # Pole just fell!
             self.steps_beyond_done = 0

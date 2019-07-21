@@ -92,34 +92,44 @@ def cartpole():
 
         # User input init to invalid value
         user_input = -1
-        action = 0
+        user_action = 0
         while True:
 
             # Rendering the ste[
             step += 1
             env.render()
 
-            # Getting user input
-            # while (user_input != 1) and (user_input != 2):
-            #
-            #     print("please enter an input")
-            #     # try:
-            #     user_input = int(getch())
-            #     print("user_input: {}".format(user_input))
-            #
-            #     if user_input == 1:
-            #         action = 1
-            #     elif user_input == 2:
-            #         action = 0
-            #     # except:
-            #         # pass
+            # Getting user action
+            while (user_input != 1) and (user_input != 2):
+
+                print("please enter an input")
+                # try:
+                user_input = int(getch())
+                print("user_input: {}".format(user_input))
+
+                if user_input == 1:
+                    user_action = 1
+                elif user_input == 2:
+                    user_action = 0
+                # except:
+                    # pass
+
+            # Getting the machine action
+            machine_action = dqn_solver.act(state)
+            env.machine_action = machine_action
+
+            # Setting the action to machine or use
+            action = user_action
+
+            # Printing actions
+            print("User Action: {} Machine Action: {} Action: {}".format(user_action, machine_action, action))
 
             # Computing the state
-            action = dqn_solver.act(state)
             state_next, reward, terminal, info = env.step(action)
             reward = reward if not terminal else -reward
             state_next = np.reshape(state_next, [1, observation_space])
-            dqn_solver.remember(state, action, reward, state_next, terminal)
+
+            dqn_solver.remember(state, machine_action, reward, state_next, terminal)
             state = state_next
 
             # Checking if game over
