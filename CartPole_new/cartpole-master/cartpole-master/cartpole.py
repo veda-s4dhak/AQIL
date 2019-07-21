@@ -9,6 +9,7 @@ from keras.optimizers import Adam
 import sys, termios, tty, os, time
 from CartPole_v1 import CartPoleEnv
 from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 
 # from scores.score_logger import ScoreLogger
 
@@ -47,15 +48,19 @@ class DQNSolver:
         self.action_space = action_space
         self.memory = deque(maxlen=MEMORY_SIZE)
 
-        self.model = Sequential()
-        self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
-        self.model.add(Dense(24, activation="relu"))
-        self.model.add(Dense(self.action_space, activation="linear"))
-        self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
+        if not os.path.exists(os.path.join(".", "model.h5")):
+            self.model = Sequential()
+            self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
+            self.model.add(Dense(24, activation="relu"))
+            self.model.add(Dense(self.action_space, activation="linear"))
+            self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
+        else:
+            print('Loading model...')
+            self.model = load_model(os.path.join(".", "model.h5"))
 
-        # self.save_path = os.path.join(".", "model.h5")
-        # self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=False, mode='min')
-        # self.callbacks_list = [self.checkpoint]
+        self.save_path = os.path.join(".", "model.h5")
+        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=False, mode='min')
+        self.callbacks_list = [self.checkpoint]
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
