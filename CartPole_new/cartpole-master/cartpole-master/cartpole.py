@@ -13,6 +13,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 import keras
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 
 # from scores.score_logger import ScoreLogger
@@ -47,6 +48,7 @@ class DQNSolver:
     # are also the labels during training in experience replay
 
     def __init__(self, observation_space, action_space):
+
         self.exploration_rate = EXPLORATION_MAX
 
         self.action_space = action_space
@@ -66,8 +68,10 @@ class DQNSolver:
             self.model = load_model(os.path.join(".", "model.h5"))
 
         self.save_path = os.path.join(".", "model.h5")
-        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=1, save_best_only=False, mode='min')
+        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=0, save_best_only=False, mode='min')
+
         self.callbacks_list = [self.checkpoint, self.tensorboard_callback]
+        self.callbacks_save_disabled = [self.tensorboard_callback]
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -80,8 +84,14 @@ class DQNSolver:
 
     def experience_replay(self):
         if len(self.memory) < BATCH_SIZE:
-            return
+            return -1
         batch = random.sample(self.memory, BATCH_SIZE)
+
+        loss = []
+
+        print(batch)
+
+        idx = 0
         for state, action, reward, state_next, terminal in batch:
             q_update = reward
             if not terminal:
@@ -93,17 +103,27 @@ class DQNSolver:
             # Action is the action which was taken in the state within the episde
             # This action is/was thought to be the optmail action before training
             # This action gets updated with the new reward.
-            print("Predicted q: {}".format(q_values))
+            # print("Predicted q: {}".format(q_values))
             q_values[0][action] = q_update
-            print("Target q: {}".format(q_values))
+            # print("Target q: {}".format(q_values))
 
             # Backpropagation based on the current experience
             # Note: at this point your q_value are your labels
-            self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
+
+            # Saves on last step of batch only
+            if idx == len(batch) - 1:
+                history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
+            else:
+                history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_save_disabled)
+
+            loss = loss + history.history['loss']
+
+            idx += 1
 
         self.exploration_rate *= EXPLORATION_DECAY
         self.exploration_rate = max(EXPLORATION_MIN, self.exploration_rate)
 
+        return np.mean(loss)
 
 def cartpole():
     # env = gym.make(ENV_NAME)
@@ -116,9 +136,13 @@ def cartpole():
     dqn_solver = DQNSolver(observation_space, action_space)
     run = 0
 
+    loss_list = []
 
+    # file_writer = tf.summary.FileWriter(os.path.join(dqn_solver.logdir, "/metrics"))
 
-    while True:
+    user_input = -1
+
+    while user_input != 0:
 
         # Environment reset
         run += 1
@@ -136,7 +160,7 @@ def cartpole():
             env.render()
 
             # Getting user action
-            while (user_input != 1) and (user_input != 2):
+            while (user_input != 1) and (user_input != 2) and (user_input != 0):
 
                 print("please enter an input")
                 # try:
@@ -150,18 +174,17 @@ def cartpole():
                 # except:
                     # pass
 
+            if user_input == 0:
+                break
+
             # Getting the machine action
             machine_action = dqn_solver.act(state)
-            env.machine_action = machine_action
-
-            # Setting the action to machine or use
-            action = machine_action#user_action
 
             # Printing actions
-            print("User Action: {} Machine Action: {} Action: {}".format(user_action, machine_action, action))
+            print("User Action: {} Machine Action: {} Action: {}".format(user_action, machine_action, user_action))
 
             # Computing the state
-            state_next, reward, terminal, info = env.step(action)
+            state_next, reward, terminal, info = env.step(user_action, machine_action)
             reward = reward if not terminal else -reward
             state_next = np.reshape(state_next, [1, observation_space])
 
@@ -175,12 +198,23 @@ def cartpole():
                 break
 
             # Post processing
-            dqn_solver.experience_replay()
+            loss = dqn_solver.experience_replay()
+
+            # Adds loss to plot list, if replay buffer is ready for training
+            if loss != -1:
+                loss_list.append(loss)
 
             # Getting ready for next state
             print("Reward: {}".format(reward))
 
             user_input = -1
+
+    print(loss_list)
+    plt.plot(loss_list)
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Step')
+    plt.show()
 
 
 if __name__ == "__main__":
