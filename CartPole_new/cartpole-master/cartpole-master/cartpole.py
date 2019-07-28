@@ -145,8 +145,8 @@ def cartpole():
 
     user_input = -1
 
-    eposiode = 0
-    while user_input != 0 and eposiode <= 100:
+    eposiode = 20
+    while user_input != 0 and eposiode <= 40:
 
         # Environment reset
         run += 1
@@ -223,7 +223,7 @@ def cartpole():
                 loss_list.append(loss)
 
             # Getting ready for next state
-            print("Reward: {}".format(reward))
+            print("Reward: {} Step: {} Eposiode :{}".format(reward, step, eposiode))
 
             user_input = -1
 
