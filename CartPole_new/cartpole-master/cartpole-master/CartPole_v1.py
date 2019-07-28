@@ -86,7 +86,7 @@ class CartPoleEnv(gym.Env):
         return [seed]
 
     # Action could be user action or machine action
-    def step(self, action, machine_action):
+    def step(self, action, user_action=None):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
         state = self.state
         x, x_dot, theta, theta_dot = state
@@ -118,8 +118,14 @@ class CartPoleEnv(gym.Env):
             # reward = 1.0 / abs(theta + 1e-5)
             # reward = 1.0 / (abs(action - self.machine_action) + 1e-5)
 
-            # reward = self.gaussian_function(theta, np.deg2rad(6), 0)
-            reward = self.gaussian_function(x=machine_action, sigma=0.5, mu=action) + self.gaussian_function(theta, np.deg2rad(6), 0)
+            if user_action:
+                # reward = self.gaussian_function(theta, np.deg2rad(6), 0)
+                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_action) + self.gaussian_function(theta,
+                                                                                                             np.deg2rad(
+                                                                                                                 6), 0)
+            else:
+                reward = self.gaussian_function(theta, np.deg2rad(6), 0)
+
             print(reward)
 
         elif self.steps_beyond_done is None:
@@ -206,4 +212,4 @@ class CartPoleEnv(gym.Env):
         :return: value of gaussian function at x
         """
 
-        return np.exp(-0.5*(((x-mu)/sigma)**2))
+        return np.exp(-0.5 * (((x - mu) / sigma) ** 2))

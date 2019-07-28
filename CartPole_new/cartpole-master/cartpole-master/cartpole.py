@@ -82,14 +82,14 @@ class DQNSolver:
         q_values = self.model.predict(state)
         return np.argmax(q_values[0])
 
-    def experience_replay(self):
+    def experience_replay(self, save=True):
         if len(self.memory) < BATCH_SIZE:
             return -1
         batch = random.sample(self.memory, BATCH_SIZE)
 
         loss = []
 
-        print(batch)
+        # print(batch)
 
         idx = 0
         for state, action, reward, state_next, terminal in batch:
@@ -111,7 +111,7 @@ class DQNSolver:
             # Note: at this point your q_value are your labels
 
             # Saves on last step of batch only
-            if idx == len(batch) - 1:
+            if save:
                 history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
             else:
                 history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_save_disabled)
@@ -127,6 +127,9 @@ class DQNSolver:
 
 def cartpole():
     # env = gym.make(ENV_NAME)
+
+    imitation_mode = False
+
     env = CartPoleEnv()
     # score_logger = ScoreLogger(ENV_NAME)
     observation_space = env.observation_space.shape[0]
@@ -142,7 +145,8 @@ def cartpole():
 
     user_input = -1
 
-    while user_input != 0:
+    eposiode = 0
+    while user_input != 0 and eposiode <= 100:
 
         # Environment reset
         run += 1
@@ -153,38 +157,46 @@ def cartpole():
         # User input init to invalid value
         user_input = -1
         user_action = 0
+
+        print('Eposiode ', eposiode)
         while True:
 
             # Rendering the ste[
             step += 1
             env.render()
 
-            # Getting user action
-            while (user_input != 1) and (user_input != 2) and (user_input != 0):
+            if not imitation_mode:
+                user_action = None
+            else:
 
-                print("please enter an input")
-                # try:
-                user_input = int(getch())
-                print("user_input: {}".format(user_input))
+                # Getting user action
+                while (user_input != 1) and (user_input != 2) and (user_input != 0):
 
-                if user_input == 1:
-                    user_action = 1
-                elif user_input == 2:
-                    user_action = 0
-                # except:
-                    # pass
+                    print("please enter an input")
+                    # try:
+                    user_input = int(getch())
+                    print("user_input: {}".format(user_input))
 
-            if user_input == 0:
-                break
+                    if user_input == 1:
+                        user_action = 1
+                    elif user_input == 2:
+                        user_action = 0
+                    # except:
+                        # pass
+
+                if user_input == 0:
+                    break
 
             # Getting the machine action
             machine_action = dqn_solver.act(state)
 
             # Printing actions
-            print("User Action: {} Machine Action: {} Action: {}".format(user_action, machine_action, user_action))
+            print("User Action: {} Machine Action: {}".format(user_action, machine_action))
 
             # Computing the state
-            state_next, reward, terminal, info = env.step(user_action, machine_action)
+            state_next, reward, terminal, info = env.step(machine_action, user_action=user_action)
+
+
             reward = reward if not terminal else -reward
             state_next = np.reshape(state_next, [1, observation_space])
 
@@ -194,11 +206,17 @@ def cartpole():
             # Checking if game over
             if terminal:
                 print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
+                eposiode += 1
                 #score_logger.add_score(step, run)
                 break
 
             # Post processing
-            loss = dqn_solver.experience_replay()
+
+            if eposiode % 20 == 0:
+                print('Saving checkpoint...')
+                loss = dqn_solver.experience_replay(save=True)
+            else:
+                loss = dqn_solver.experience_replay(save=False)
 
             # Adds loss to plot list, if replay buffer is ready for training
             if loss != -1:
@@ -208,6 +226,7 @@ def cartpole():
             print("Reward: {}".format(reward))
 
             user_input = -1
+
 
     print(loss_list)
     plt.plot(loss_list)
