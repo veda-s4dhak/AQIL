@@ -9,27 +9,21 @@ from cartpole_env import CartPoleEnv
 from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
 
-class Cartpole():
 
+class Cartpole():
     """
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
 
-    IMITATION_MODE = False
-
-    USER_INPUT = dict()
-    USER_INPUT[0] = "APPLY FORCE LEFT"
-    USER_INPUT[1] = "APPLY FORCE RIGHT"
-    USER_INPUT[2] = "EXIT"
-    USER_INPUT[3] = "NO_INPUT_PRESENT"
-
-    USER_INPUT_INDEX = [0, 1, 2, 3]
+    IMITATION_MODE = True
 
     USER_ACTION = dict()
-    USER_ACTION["APPLY_FORCE_LEFT"] = 0
-    USER_ACTION["APPLY_FORCE_RIGHT"] = 1
-    USER_ACTION["EXIT"] = 2
-    USER_ACTION["NO_ACTION"] = 3
+    USER_ACTION[1] = "APPLY FORCE LEFT"
+    USER_ACTION[2] = "APPLY FORCE RIGHT"
+    USER_ACTION[0] = "EXIT"
+    USER_ACTION[3] = "NO_INPUT_PRESENT"
+
+    USER_INPUT_INDEX = [0, 1, 2, 3]
 
     def __init__(self):
 
@@ -43,9 +37,13 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.dqn = CartpoleDQN(self.observation_space, self.action_space)
+        self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name='Cartpole_DQN')
 
-    def getch(self):
+        # Stores the loss values across all episodes
+        self.loss_aggregation = []
+
+    @staticmethod
+    def getch():
 
         """
         This method gets the user input without requiring the user to press
@@ -61,25 +59,27 @@ class Cartpole():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-        return self.USER_INPUT[int(ch)]
+        return int(ch)
 
     def get_user_input(self):
 
         """Gets the user input and parses the corresponding user action"""
 
-        user_action = self.USER_ACTION["NO_ACTION"]
+        user_action = None
+
+        print("Please enter an input:")
         user_input = self.getch()
 
         # Getting user action
         while user_input not in self.USER_INPUT_INDEX:
-
             print("Please enter an input:")
-            user_input = self.getch()
+            user_input = int(self.getch())
+
             print("User input: {}".format(user_input))
 
-            user_action = self.USER_ACTION[user_input]
+        user_action = self.USER_ACTION[user_input]
 
-        return user_input , user_action
+        return user_input, user_action
 
     def plot_loss(self):
 
@@ -101,18 +101,14 @@ class Cartpole():
         """
 
         # The number of episodes which have completed
-        episode = 20
+        episode = 0
 
         # The  maximum number of episodes to run
         episode_limit = 40
 
-        # Stores the loss values across all episodes
-        self.loss_aggregation = []
+        user_action = None
 
-        # Initializing the user input
-        user_input = self.USER_INPUT[3]
-
-        while user_input != "NO_INPUT_PRESENT" and episode_limit <= 40:
+        while user_action != "EXIT" and episode <= episode_limit:
 
             # Environment reset
             state = self.env.reset()
@@ -120,7 +116,7 @@ class Cartpole():
             step = 0
 
             # Running the episode
-            print('Epsiode: {}'.format(episode))
+            print('Episode: {}'.format(episode))
             while True:
 
                 # Rendering the ste[
@@ -133,13 +129,15 @@ class Cartpole():
                 else:
                     user_input, user_action = self.get_user_input()
 
+                print(user_action)
+
                 # Exiting on user request
                 # This will also save the model and plot the loss
-                if user_input == "EXIT":
+
+                if user_action == "EXIT":
                     print("Saving model...")
                     loss = self.dqn.experience_replay(save=True)
                     self.loss_aggregation.append(loss)
-                    self.plot_loss()
                     print("Saved model.")
                     break
 
@@ -147,10 +145,13 @@ class Cartpole():
                 machine_action = self.dqn.act(state)
 
                 # Printing actions
-                print("User Action: {} Machine Action: {}".format(user_action, machine_action))
+                if self.IMITATION_MODE:
+                    print("User Action: {} Machine Action: {}".format(user_input, machine_action))
+                else:
+                    print("Machine Action: {}".format(machine_action))
 
                 # Computing the state
-                state_next, reward, terminal, info = self.env.step(machine_action, user_action=user_action)
+                state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input)
 
                 # Computing the reward
                 reward = reward if not terminal else -reward
@@ -182,10 +183,11 @@ class Cartpole():
                     self.loss_aggregation.append(loss)
 
                 # Getting ready for next state
-                print("Reward: {} Step: {} Eposiode :{}".format(reward, step, episode))
+                print("Reward: {} Step: {} Episode :{}".format(reward, step, episode))
+
+        self.plot_loss()
 
 
 if __name__ == "__main__":
-
     cartpole = Cartpole()
     cartpole.run()

@@ -18,7 +18,6 @@ from datetime import datetime
 
 
 class CartpoleDQN:
-
     """
     Contains the deep neural network agent which can be reinforced with
     game experience or through an expert human player
@@ -55,7 +54,7 @@ class CartpoleDQN:
         self.memory = deque(maxlen=self.MEMORY_SIZE)
 
         # Initialize the model if it does not exist
-        if not os.path.exists(os.path.join(".", "model", "{}.h5".format(self.model_name))):
+        if not os.path.exists(os.path.join(".", "models", "{}.h5".format(self.model_name))):
             self.model = Sequential()
             self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
             self.model.add(Dense(24, activation="relu"))
@@ -64,10 +63,10 @@ class CartpoleDQN:
         # Otherwise load the model
         else:
             print('Loading model...')
-            self.model = load_model(os.path.join(".", "model", "{}.h5".format(self.model_name)))
+            self.model = load_model(os.path.join(".", "models", "{}.h5".format(self.model_name)))
 
         # Model save configuration
-        self.save_path = os.path.join(".", "{}.h5".format(self.model_name))
+        self.save_path = os.path.join(".", "models", "{}.h5".format(self.model_name))
         self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=0, save_best_only=False, mode='min')
         self.callbacks_list = [self.checkpoint]
         self.callbacks_save_disabled = []
@@ -104,6 +103,7 @@ class CartpoleDQN:
         else:
             q_values = self.model.predict(state)
             print("q_values: {}".format(q_values))
+            print(q_values.shape)
             print("action_space: {}".format(self.action_space))
             print("np.argmax(q_values[0]): {}".format(np.argmax(q_values[0])))
             return np.argmax(q_values[0])
@@ -158,12 +158,12 @@ class CartpoleDQN:
                 else:
                     history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_save_disabled)
 
-                    loss = loss + history.history['loss']
+                loss = loss + history.history['loss']
 
             # Changing exploration rate after training
             # This is equivalent to modifying your learning rate in supervised learning
             self.exploration_rate *= self.EXPLORATION_DECAY
             self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
 
-            # Returning the average loss
+            # Returning the average loss if loss list is not empty
             return np.mean(loss)

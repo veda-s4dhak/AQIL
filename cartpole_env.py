@@ -86,13 +86,14 @@ class CartPoleEnv(gym.Env):
         return [seed]
 
     # Action could be user action or machine action
-    def step(self, action, user_action=None):
+    def step(self, action, user_input=None):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
         state = self.state
         x, x_dot, theta, theta_dot = state
 
-        if user_action is not None:
-            force = self.force_mag if user_action == 1 else -self.force_mag
+        # Applies force based on user input, if user input is available
+        if user_input is not None:
+            force = self.force_mag if user_input == 1 else -self.force_mag
         else:
             force = self.force_mag if action == 1 else -self.force_mag
 
@@ -122,8 +123,10 @@ class CartPoleEnv(gym.Env):
         if not done:
 
             # This is the reward used for imitation learning
-            if user_action:
-                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_action) + self.gaussian_function(theta, np.deg2rad(6), 0)
+            if user_input:
+                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_input) + self.gaussian_function(theta,
+                                                                                                             np.deg2rad(
+                                                                                                                 6), 0)
             # This is the reward used for reinforcement learning
             else:
                 reward = self.gaussian_function(theta, np.deg2rad(6), 0)
