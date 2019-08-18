@@ -120,14 +120,11 @@ class CartPoleEnv(gym.Env):
         done = bool(done)
 
         if not done:
-            # reward = 1.0 / abs(theta + 1e-5)
-            # reward = 1.0 / (abs(action - self.machine_action) + 1e-5)
 
+            # This is the reward used for imitation learning
             if user_action:
-                # reward = self.gaussian_function(theta, np.deg2rad(6), 0)
-                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_action) + self.gaussian_function(theta,
-                                                                                                             np.deg2rad(
-                                                                                                                 6), 0)
+                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_action) + self.gaussian_function(theta, np.deg2rad(6), 0)
+            # This is the reward used for reinforcement learning
             else:
                 reward = self.gaussian_function(theta, np.deg2rad(6), 0)
 
@@ -210,7 +207,9 @@ class CartPoleEnv(gym.Env):
             self.viewer = None
 
     def gaussian_function(self, x, sigma, mu):
+
         """
+        Gaussian function used in computing reward
 
         :param sigma: std
         :param mu: mean

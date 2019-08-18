@@ -1,240 +1,191 @@
-import random
-import gym
+"""
+This is the main application entry point. It runs the cartpole game
+via the cartpole_dqn and cartpole_env modules.
+"""
+
 import numpy as np
-import tensorflow as tf
-import os
-from collections import deque
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.optimizers import Adam
-import sys, termios, tty, os, time
-from CartPole_v1 import CartPoleEnv
-from keras.callbacks import ModelCheckpoint
-from keras.models import load_model
-import keras
-from datetime import datetime
+import sys, termios, tty, os
+from cartpole_env import CartPoleEnv
+from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
 
+class Cartpole():
 
-# from scores.score_logger import ScoreLogger
+    """
+    Cartpole runs the game using the deep neural network and the OpenAI Gym
+    """
 
-ENV_NAME = "CartPole-v1"
+    IMITATION_MODE = False
 
-GAMMA = 0.95
-LEARNING_RATE = 0.001
+    USER_INPUT = dict()
+    USER_INPUT[0] = "APPLY FORCE LEFT"
+    USER_INPUT[1] = "APPLY FORCE RIGHT"
+    USER_INPUT[2] = "EXIT"
+    USER_INPUT[3] = "NO_INPUT_PRESENT"
 
-MEMORY_SIZE = 1000000
-BATCH_SIZE = 20
+    USER_INPUT_INDEX = [0, 1, 2, 3]
 
-EXPLORATION_MAX = 1.0
-EXPLORATION_MIN = 0.01
-EXPLORATION_DECAY = 0.995
+    USER_ACTION = dict()
+    USER_ACTION["APPLY_FORCE_LEFT"] = 0
+    USER_ACTION["APPLY_FORCE_RIGHT"] = 1
+    USER_ACTION["EXIT"] = 2
+    USER_ACTION["NO_ACTION"] = 3
 
+    def __init__(self):
 
-def getch():
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
+        """
+        Constructor
+        """
 
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+        # Initializing the environment
+        self.env = CartPoleEnv()
+        self.observation_space = self.env.observation_space.shape[0]
+        self.action_space = self.env.action_space.n
 
-class DQNSolver:
+        # Initializing the neural network
+        self.dqn = CartpoleDQN(self.observation_space, self.action_space)
 
-    # q_values is the output of the neural network given a state also they
-    # are also the labels during training in experience replay
+    def getch(self):
 
-    def __init__(self, observation_space, action_space):
+        """
+        This method gets the user input without requiring the user to press
+        enter afterwards
+        """
 
-        self.exploration_rate = EXPLORATION_MAX
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
 
-        self.action_space = action_space
-        self.memory = deque(maxlen=MEMORY_SIZE)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-        self.logdir = os.path.join('.', "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S"))
-        self.tensorboard_callback = keras.callbacks.TensorBoard(log_dir=self.logdir)
+        return self.USER_INPUT[int(ch)]
 
-        if not os.path.exists(os.path.join(".", "model.h5")):
-            self.model = Sequential()
-            self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
-            self.model.add(Dense(24, activation="relu"))
-            self.model.add(Dense(self.action_space, activation="linear"))
-            self.model.compile(loss="mse", optimizer=Adam(lr=LEARNING_RATE))
-        else:
-            print('Loading model...')
-            self.model = load_model(os.path.join(".", "model.h5"))
+    def get_user_input(self):
 
-        self.save_path = os.path.join(".", "model.h5")
-        self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=0, save_best_only=False, mode='min')
+        """Gets the user input and parses the corresponding user action"""
 
-        self.callbacks_list = [self.checkpoint, self.tensorboard_callback]
-        self.callbacks_save_disabled = [self.tensorboard_callback]
+        user_action = self.USER_ACTION["NO_ACTION"]
+        user_input = self.getch()
 
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done))
+        # Getting user action
+        while user_input not in self.USER_INPUT_INDEX:
 
-    def act(self, state):
-        if np.random.rand() < self.exploration_rate:
-            return random.randrange(self.action_space)
-        q_values = self.model.predict(state)
-        return np.argmax(q_values[0])
+            print("Please enter an input:")
+            user_input = self.getch()
+            print("User input: {}".format(user_input))
 
-    def experience_replay(self, save=True):
-        if len(self.memory) < BATCH_SIZE:
-            return -1
-        batch = random.sample(self.memory, BATCH_SIZE)
+            user_action = self.USER_ACTION[user_input]
 
-        loss = []
+        return user_input , user_action
 
-        # print(batch)
+    def plot_loss(self):
 
-        idx = 0
-        for state, action, reward, state_next, terminal in batch:
-            q_update = reward
-            if not terminal:
-                q_update = (reward + GAMMA * np.amax(self.model.predict(state_next)[0])) # Bellman
+        """
+        Plots the loss across the episodes which have been run
+        """
 
-            # Output of the neural network (q values) given the state
-            q_values = self.model.predict(state)
+        print(self.loss_aggregation)
+        plt.plot(self.loss_aggregation)
+        plt.title('Model Loss')
+        plt.ylabel('Loss')
+        plt.xlabel('Step')
+        plt.show()
 
-            # Action is the action which was taken in the state within the episde
-            # This action is/was thought to be the optmail action before training
-            # This action gets updated with the new reward.
-            # print("Predicted q: {}".format(q_values))
-            q_values[0][action] = q_update
-            # print("Target q: {}".format(q_values))
+    def run(self):
 
-            # Backpropagation based on the current experience
-            # Note: at this point your q_value are your labels
+        """
+        Runs the cartpole game (main program entry point)
+        """
 
-            # Saves on last step of batch only
-            if save:
-                history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_list)
-            else:
-                history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_save_disabled)
+        # The number of episodes which have completed
+        episode = 20
 
-            loss = loss + history.history['loss']
+        # The  maximum number of episodes to run
+        episode_limit = 40
 
-            idx += 1
+        # Stores the loss values across all episodes
+        self.loss_aggregation = []
 
-        self.exploration_rate *= EXPLORATION_DECAY
-        self.exploration_rate = max(EXPLORATION_MIN, self.exploration_rate)
+        # Initializing the user input
+        user_input = self.USER_INPUT[3]
 
-        return np.mean(loss)
+        while user_input != "NO_INPUT_PRESENT" and episode_limit <= 40:
 
-def cartpole():
-    # env = gym.make(ENV_NAME)
+            # Environment reset
+            state = self.env.reset()
+            state = np.reshape(state, [1, self.observation_space])
+            step = 0
 
-    imitation_mode = False
+            # Running the episode
+            print('Epsiode: {}'.format(episode))
+            while True:
 
-    env = CartPoleEnv()
-    # score_logger = ScoreLogger(ENV_NAME)
-    observation_space = env.observation_space.shape[0]
-    action_space = env.action_space.n
-    print("Action Space Length: {}".format(action_space))
-    print("Action Space: {}".format(env.action_space))
-    dqn_solver = DQNSolver(observation_space, action_space)
-    run = 0
+                # Rendering the ste[
+                step += 1
+                self.env.render()
 
-    loss_list = []
+                # Getting the user action based on the specified mode
+                if not self.IMITATION_MODE:
+                    user_action = None
+                else:
+                    user_input, user_action = self.get_user_input()
 
-    # file_writer = tf.summary.FileWriter(os.path.join(dqn_solver.logdir, "/metrics"))
-
-    user_input = -1
-
-    eposiode = 20
-    while user_input != 0 and eposiode <= 40:
-
-        # Environment reset
-        run += 1
-        state = env.reset()
-        state = np.reshape(state, [1, observation_space])
-        step = 0
-
-        # User input init to invalid value
-        user_input = -1
-        user_action = 0
-
-        print('Eposiode ', eposiode)
-        while True:
-
-            # Rendering the ste[
-            step += 1
-            env.render()
-
-            if not imitation_mode:
-                user_action = None
-            else:
-
-                # Getting user action
-                while (user_input != 1) and (user_input != 2) and (user_input != 0):
-
-                    print("please enter an input")
-                    # try:
-                    user_input = int(getch())
-                    print("user_input: {}".format(user_input))
-
-                    if user_input == 1:
-                        user_action = 1
-                    elif user_input == 2:
-                        user_action = 0
-                    # except:
-                        # pass
-
-                if user_input == 0:
+                # Exiting on user request
+                # This will also save the model and plot the loss
+                if user_input == "EXIT":
+                    print("Saving model...")
+                    loss = self.dqn.experience_replay(save=True)
+                    self.loss_aggregation.append(loss)
+                    self.plot_loss()
+                    print("Saved model.")
                     break
 
-            # Getting the machine action
-            machine_action = dqn_solver.act(state)
+                # Getting the machine action
+                machine_action = self.dqn.act(state)
 
-            # Printing actions
-            print("User Action: {} Machine Action: {}".format(user_action, machine_action))
+                # Printing actions
+                print("User Action: {} Machine Action: {}".format(user_action, machine_action))
 
-            # Computing the state
-            state_next, reward, terminal, info = env.step(machine_action, user_action=user_action)
+                # Computing the state
+                state_next, reward, terminal, info = self.env.step(machine_action, user_action=user_action)
 
+                # Computing the reward
+                reward = reward if not terminal else -reward
 
-            reward = reward if not terminal else -reward
-            state_next = np.reshape(state_next, [1, observation_space])
+                # Computing the next state
+                state_next = np.reshape(state_next, [1, self.observation_space])
 
-            dqn_solver.remember(state, machine_action, reward, state_next, terminal)
-            state = state_next
+                # Storing the step for experience replay
+                self.dqn.remember(state, machine_action, reward, state_next, terminal)
 
-            # Checking if game over
-            if terminal:
-                print("Run: " + str(run) + ", exploration: " + str(dqn_solver.exploration_rate) + ", score: " + str(step))
-                eposiode += 1
-                #score_logger.add_score(step, run)
-                break
+                # Setting the current state to be the next state
+                state = state_next
 
-            # Post processing
+                # Checking if game over
+                if terminal:
+                    print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
+                    episode += 1
+                    break
 
-            if eposiode % 20 == 0:
-                print('Saving checkpoint...')
-                loss = dqn_solver.experience_replay(save=True)
-            else:
-                loss = dqn_solver.experience_replay(save=False)
+                # Post processing
+                if episode % 20 == 0:
+                    print('Saving models...')
+                    loss = self.dqn.experience_replay(save=True)
+                else:
+                    loss = self.dqn.experience_replay(save=False)
 
-            # Adds loss to plot list, if replay buffer is ready for training
-            if loss != -1:
-                loss_list.append(loss)
+                # Adds loss to plot list, if replay buffer is ready for training
+                if loss != -1:
+                    self.loss_aggregation.append(loss)
 
-            # Getting ready for next state
-            print("Reward: {} Step: {} Eposiode :{}".format(reward, step, eposiode))
-
-            user_input = -1
-
-
-    print(loss_list)
-    plt.plot(loss_list)
-    plt.title('Model Loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Step')
-    plt.show()
+                # Getting ready for next state
+                print("Reward: {} Step: {} Eposiode :{}".format(reward, step, episode))
 
 
 if __name__ == "__main__":
-    cartpole()
+
+    cartpole = Cartpole()
+    cartpole.run()

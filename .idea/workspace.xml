@@ -2,38 +2,44 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1e57059-99e6-4a39-aef2-3933b41cdbd6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/cartpole.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/other.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/CartPole_v1.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/assets/cartpole_example.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/assets/cartpole_icon_web.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/cartpole.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/model.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/score_logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/scores.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/scores.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/solved.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/Reinforcement Learning/solved.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/checkpoint/model_reinforcement.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/model.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/score_logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/scores.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/scores.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/solved.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/scores/solved.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cart_Pole/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CartPole_v1.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/cartpole_example.gif" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cartpole_example.gif" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/cartpole_icon_web.png" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cartpole_icon_web.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cartpole.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole_dqn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/model.h5" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/score_logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/scores.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/scores.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/solved.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/solved.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/checkpoint/model_reinforcement.h5" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735899.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735900.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735901.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735902.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735903.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735904.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735905.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735906.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735907.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735908.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735909.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735910.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735911.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735912.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735913.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735914.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735915.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735916.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735917.veda-VirtualBox" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/score_logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/scores.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/scores.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/solved.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scores/solved.png" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,11 +49,41 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="6" lean-forward="true" selection-start-column="6" selection-end-column="6" />
+              <caret column="6" selection-start-column="6" selection-end-column="6" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cartpole_env.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="660">
+              <caret line="44" column="7" lean-forward="true" selection-start-line="44" selection-start-column="7" selection-end-line="44" selection-end-column="7" />
+              <folding>
+                <element signature="e#169#180#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cartpole.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cartpole_dqn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="12" lean-forward="true" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -70,32 +106,36 @@
         <option value="$PROJECT_DIR$/Cart_Pole/test.py" />
         <option value="$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.gitignore" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/__init__.py" />
+        <option value="$PROJECT_DIR$/cartpole.py" />
+        <option value="$PROJECT_DIR$/cartpole_dqn.py" />
+        <option value="$PROJECT_DIR$/cartpole_env.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-1855" />
-    <option name="y" value="-4" />
-    <option name="width" value="1855" />
-    <option name="height" value="1084" />
+    <option name="x" value="363" />
+    <option name="y" value="192" />
+    <option name="width" value="1789" />
+    <option name="height" value="1015" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="OpenAI_Gym_Testing" type="b2602c69:ProjectViewProjectNode" />
-              <item name="OpenAI_Gym_Testing" type="462c0819:PsiDirectoryNode" />
+              <item name="Cartpole-Imitiation-Learning" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Cartpole-Imitiation-Learning" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -105,6 +145,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -165,11 +206,11 @@
     <frame x="65" y="-4" width="2385" height="1379" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14521591" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17400508" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3299373" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.5657492" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -199,37 +240,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cart_Pole/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-131">
-          <caret line="108" column="17" lean-forward="true" selection-start-line="108" selection-start-column="17" selection-end-line="108" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="6" lean-forward="true" selection-start-column="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/cartpole.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="53" column="25" selection-start-line="53" selection-start-column="25" selection-end-line="53" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/CartPole_v1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1830">
-          <caret line="126" column="26" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/Cart_Pole/test.py" />
+    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/.gitignore" />
+    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/cartpole.py" />
+    <entry file="file://$PROJECT_DIR$/CartPole_new/cartpole-master/cartpole-master/CartPole_v1.py" />
     <entry file="file://$USER_HOME$/python36/lib/python3.6/site-packages/keras/engine/training.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -237,10 +251,53 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/resources/cartpole_icon_web.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/cartpole_example.gif">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scores/score_logger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="6" lean-forward="true" selection-start-column="6" selection-end-column="6" />
+          <caret column="6" selection-start-column="6" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cartpole_env.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="44" column="7" lean-forward="true" selection-start-line="44" selection-start-column="7" selection-end-line="44" selection-end-column="7" />
+          <folding>
+            <element signature="e#169#180#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cartpole.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cartpole_dqn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="12" lean-forward="true" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
         </state>
       </provider>
     </entry>
