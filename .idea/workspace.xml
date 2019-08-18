@@ -2,44 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1e57059-99e6-4a39-aef2-3933b41cdbd6" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CartPole_v1.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/cartpole_example.gif" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cartpole_example.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/cartpole_icon_web.png" beforeDir="false" afterPath="$PROJECT_DIR$/resources/cartpole_icon_web.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cartpole.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/cartpole_dqn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/model.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/score_logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/scores.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/scores.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/solved.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/Reinforcement Learning/solved.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/checkpoint/model_reinforcement.h5" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735899.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735900.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735901.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735902.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735903.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735904.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735905.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735906.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735907.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735908.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735909.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735910.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735911.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735912.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735913.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735914.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735915.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735916.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/scalars/20190721-120429/events.out.tfevents.1563735917.veda-VirtualBox" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/score_logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/scores.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/scores.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/solved.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scores/solved.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.h5" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -79,11 +43,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cartpole_dqn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="12" lean-forward="true" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
+            <state relative-caret-position="495">
+              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+              <folding>
+                <element signature="e#2#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/LICENSE">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="19" lean-forward="true" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -110,6 +86,7 @@
         <option value="$PROJECT_DIR$/cartpole.py" />
         <option value="$PROJECT_DIR$/cartpole_dqn.py" />
         <option value="$PROJECT_DIR$/cartpole_env.py" />
+        <option value="$PROJECT_DIR$/LICENSE" />
       </list>
     </option>
   </component>
@@ -296,8 +273,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cartpole_dqn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="12" lean-forward="true" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="12" />
+        <state relative-caret-position="495">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+          <folding>
+            <element signature="e#2#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="19" lean-forward="true" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
         </state>
       </provider>
     </entry>
