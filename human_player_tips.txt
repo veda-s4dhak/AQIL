@@ -1,0 +1,9 @@
+These patterns have shown to be effective in controlling cart:
+
+Simple Alternation (This maintains state) => 1,2,1,2
+Tip Left => 1,1,2,1,1,2
+Tip Right => 2,1,1,2,2,1
+Hard Tip Left => 1,1,1,2,1,1,1,2
+Hard Lip Right => 2,2,2,1,2,2,2,1
+Move Left (When pole is tilted right this will move the cart left) => 1,1,1,2,2,1,1,1,2,2
+Move Left (When pole is tilted left this will move the cart right) => 2,2,2,1,1,2,2,2,1,1
