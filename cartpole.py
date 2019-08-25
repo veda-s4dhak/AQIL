@@ -21,9 +21,8 @@ class Cartpole():
     USER_ACTION[1] = "APPLY FORCE LEFT"
     USER_ACTION[2] = "APPLY FORCE RIGHT"
     USER_ACTION[0] = "EXIT"
-    USER_ACTION[3] = "NO_INPUT_PRESENT"
 
-    USER_INPUT_INDEX = [0, 1, 2, 3]
+    USER_INPUT_INDEX = [0, 1, 2]
 
     def __init__(self):
 
