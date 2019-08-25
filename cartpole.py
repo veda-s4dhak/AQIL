@@ -8,6 +8,7 @@ import sys, termios, tty, os
 from cartpole_env import CartPoleEnv
 from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class Cartpole():
@@ -15,11 +16,11 @@ class Cartpole():
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
 
-    IMITATION_MODE = False
+    IMITATION_MODE = True
 
     USER_ACTION = dict()
-    USER_ACTION[1] = "APPLY FORCE LEFT"
-    USER_ACTION[2] = "APPLY FORCE RIGHT"
+    USER_ACTION[1] = "APPLY FORCE RIGHT"
+    USER_ACTION[2] = "APPLY FORCE LEFT"
     USER_ACTION[0] = "EXIT"
 
     USER_INPUT_INDEX = [0, 1, 2]
@@ -36,7 +37,8 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name='Cartpole_DQN')
+        self.model_name = "imitation.v2"
+        self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Stores the loss values across all episodes
         self.loss_aggregation = []
@@ -92,6 +94,16 @@ class Cartpole():
         plt.ylabel('Loss')
         plt.xlabel('Step')
         plt.show()
+        plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)))
+
+        # Generating the dictionary from list
+        loss_aggregation_dict = dict()
+        for episode_num in range(0, len(self.loss_aggregation)):
+            loss_aggregation_dict[episode_num] = self.loss_aggregation[episode_num]
+
+        # Saving the data to a csv
+        df = pd.DataFrame.from_dict(loss_aggregation_dict, orient="index")
+        df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name)))
 
     def run(self):
 
@@ -129,8 +141,6 @@ class Cartpole():
                 else:
                     user_input, user_action = self.get_user_input()
 
-                print(user_action)
-
                 # Exiting on user request
                 # This will also save the model and plot the loss
 
@@ -148,7 +158,7 @@ class Cartpole():
                 if self.IMITATION_MODE:
                     print("User Action: {} Machine Action: {}".format(user_input, machine_action))
                 else:
-                    print("Machine Action: {}".format(machine_action))
+                    print("User Action: None Machine Action: {}".format(machine_action))
 
                 # Computing the state
                 state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input)
@@ -181,6 +191,7 @@ class Cartpole():
                 # Adds loss to plot list, if replay buffer is ready for training
                 if loss != -1:
                     self.loss_aggregation.append(loss)
+                    print(self.loss_aggregation)
 
                 # Getting ready for next state
                 print("Reward: {} Step: {} Episode :{}".format(reward, step, episode))
