@@ -19,8 +19,8 @@ class Cartpole():
     IMITATION_MODE = True
 
     USER_ACTION = dict()
-    USER_ACTION[1] = "APPLY FORCE RIGHT"
-    USER_ACTION[2] = "APPLY FORCE LEFT"
+    USER_ACTION[1] = "APPLY FORCE LEFT"
+    USER_ACTION[2] = "APPLY FORCE RIGHT"
     USER_ACTION[0] = "EXIT"
 
     USER_INPUT_INDEX = [0, 1, 2]
@@ -42,6 +42,9 @@ class Cartpole():
 
         # Stores the loss values across all episodes
         self.loss_aggregation = []
+        self.reward_aggregation = []
+        self.user_action_aggregation = []
+        self.machine_action_aggregation = []
 
     @staticmethod
     def getch():
@@ -82,28 +85,66 @@ class Cartpole():
 
         return user_input, user_action
 
-    def plot_loss(self):
+    def plot_data(self):
 
         """
         Plots the loss across the episodes which have been run
         """
 
         print(self.loss_aggregation)
+
+
+        plt.subplot(4, 1, 1)
         plt.plot(self.loss_aggregation)
         plt.title('Model Loss')
         plt.ylabel('Loss')
         plt.xlabel('Step')
-        plt.show()
+
+        plt.subplot(4, 1, 2)
+        plt.plot(self.reward_aggregation)
+        plt.title('Reward')
+        plt.ylabel('Reward')
+        plt.xlabel('Step')
+
+        plt.subplot(4, 1, 3)
+        plt.plot(self.machine_action_aggregation)
+        plt.title('Machine Action')
+        plt.ylabel('Action')
+        plt.xlabel('Step')
+
+        plt.subplot(4, 1, 4)
+        plt.plot(self.user_action_aggregation)
+        plt.title('User Action')
+        plt.ylabel('Action')
+        plt.xlabel('Step')
+
+        plt.tight_layout()
+
         plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)))
+        plt.show()
 
         # Generating the dictionary from list
         loss_aggregation_dict = dict()
-        for episode_num in range(0, len(self.loss_aggregation)):
-            loss_aggregation_dict[episode_num] = self.loss_aggregation[episode_num]
+        action_dict = dict()
+        reward_dict = dict()
+
+        loss_aggregation_dict['Loss'] = self.loss_aggregation
+        action_dict['User_Action'] = self.user_action_aggregation
+        action_dict['Machine_Action'] = self.machine_action_aggregation
+        reward_dict['Reward'] = self.reward_aggregation
+
+        # for episode_num in range(0, len(self.loss_aggregation)):
+        #     loss_aggregation_dict[episode_num] = self.loss_aggregation[episode_num]
 
         # Saving the data to a csv
-        df = pd.DataFrame.from_dict(loss_aggregation_dict, orient="index")
-        df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name)))
+        df = pd.DataFrame.from_dict(loss_aggregation_dict)
+        df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name + '_loss')), header=True, index=True)
+
+        df = pd.DataFrame.from_dict(action_dict)
+        df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name + '_action')), header=True, index=True)
+
+        df = pd.DataFrame.from_dict(reward_dict)
+        df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name + '_reward')), header=True, index=True)
 
     def run(self):
 
@@ -126,6 +167,8 @@ class Cartpole():
             state = np.reshape(state, [1, self.observation_space])
             step = 0
 
+            r_eposiode = 0
+
             # Running the episode
             print('Episode: {}'.format(episode))
             while True:
@@ -146,25 +189,30 @@ class Cartpole():
 
                 if user_action == "EXIT":
                     print("Saving model...")
-                    loss = self.dqn.experience_replay(save=True)
+                    loss, r = self.dqn.experience_replay(save=True)
                     self.loss_aggregation.append(loss)
+                    self.reward_aggregation.append(r_eposiode)
                     print("Saved model.")
                     break
 
                 # Getting the machine action
                 machine_action = self.dqn.act(state)
 
+                self.machine_action_aggregation.append(machine_action)
+                self.user_action_aggregation.append(user_input - 1)
+
                 # Printing actions
                 if self.IMITATION_MODE:
-                    print("User Action: {} Machine Action: {}".format(user_input, machine_action))
+                    print("User Action: {} Machine Action: {}".format(user_input - 1, machine_action))
                 else:
                     print("User Action: None Machine Action: {}".format(machine_action))
 
                 # Computing the state
-                state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input)
+                state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input - 1)
 
                 # Computing the reward
                 reward = reward if not terminal else -reward
+                r_eposiode += reward
 
                 # Computing the next state
                 state_next = np.reshape(state_next, [1, self.observation_space])
@@ -178,15 +226,16 @@ class Cartpole():
                 # Checking if game over
                 if terminal:
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
+                    self.reward_aggregation.append(r_eposiode)
                     episode += 1
                     break
 
                 # Post processing
                 if episode % 20 == 0:
                     print('Saving models...')
-                    loss = self.dqn.experience_replay(save=True)
+                    loss, r = self.dqn.experience_replay(save=True)
                 else:
-                    loss = self.dqn.experience_replay(save=False)
+                    loss, r = self.dqn.experience_replay(save=False)
 
                 # Adds loss to plot list, if replay buffer is ready for training
                 if loss != -1:
@@ -196,7 +245,7 @@ class Cartpole():
                 # Getting ready for next state
                 print("Reward: {} Step: {} Episode :{}".format(reward, step, episode))
 
-        self.plot_loss()
+        self.plot_data()
 
 
 if __name__ == "__main__":
