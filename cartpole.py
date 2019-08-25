@@ -15,7 +15,7 @@ class Cartpole():
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
 
-    IMITATION_MODE = True
+    IMITATION_MODE = False
 
     USER_ACTION = dict()
     USER_ACTION[1] = "APPLY FORCE LEFT"
@@ -125,6 +125,7 @@ class Cartpole():
                 # Getting the user action based on the specified mode
                 if not self.IMITATION_MODE:
                     user_action = None
+                    user_input = None
                 else:
                     user_input, user_action = self.get_user_input()
 
