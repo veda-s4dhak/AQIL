@@ -191,7 +191,6 @@ class Cartpole():
                 # Adds loss to plot list, if replay buffer is ready for training
                 if loss != -1:
                     self.loss_aggregation.append(loss)
-                    print(self.loss_aggregation)
 
                 # Getting ready for next state
                 print("Reward: {} Step: {} Episode :{}".format(reward, step, episode))
