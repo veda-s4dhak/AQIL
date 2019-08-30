@@ -119,7 +119,7 @@ class CartpoleDQN:
         # If there are not enough steps across all episodes to accommodate the
         # minimum batch size then do not train
         if len(self.memory) < self.BATCH_SIZE:
-            return -1
+            return -1, -1
 
         # If there are enough steps then train
         else:
@@ -129,6 +129,7 @@ class CartpoleDQN:
 
             # The loss values across the entire batch
             loss = []
+            rewards = []
 
             # Iterating through each step in the batch
             for state, action, reward, state_next, terminal in batch:
@@ -159,6 +160,8 @@ class CartpoleDQN:
                     history = self.model.fit(state, q_values, verbose=0, callbacks=self.callbacks_save_disabled)
 
                 loss = loss + history.history['loss']
+                rewards = rewards + [reward]
+
 
             # Changing exploration rate after training
             # This is equivalent to modifying your learning rate in supervised learning
@@ -166,4 +169,4 @@ class CartpoleDQN:
             self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
 
             # Returning the average loss if loss list is not empty
-            return np.mean(loss)
+            return np.mean(loss), np.mean(rewards)
