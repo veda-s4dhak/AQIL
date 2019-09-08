@@ -37,7 +37,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL50"
+        self.model_name = "RL10"
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Stores the loss values across all episodes
@@ -93,34 +93,34 @@ class Cartpole():
 
         print(self.loss_aggregation)
 
+        fig = plt.figure(figsize=(8, 15))
 
-        plt.figure(figsize=(8, 15))
-
-        plt.subplot(4, 1, 1)
+        ax1 = fig.add_subplot(4, 1, 1)
         plt.plot(self.loss_aggregation)
+        ax1.set_yscale('log')
         plt.title('Model Loss')
         plt.ylabel('Loss')
         plt.xlabel('Step')
 
-        plt.subplot(4, 1, 2)
+        ax2 = plt.subplot(4, 1, 2)
         plt.plot(self.reward_aggregation)
         plt.title('Reward')
         plt.ylabel('Reward')
         plt.xlabel('Step')
 
-        plt.subplot(4, 1, 3)
+        ax3 = plt.subplot(4, 1, 3)
         plt.plot(self.machine_action_aggregation)
         plt.title('Machine Action')
         plt.ylabel('Action')
         plt.xlabel('Step')
 
-        plt.subplot(4, 1, 4)
+        ax4 = plt.subplot(4, 1, 4)
         plt.plot(self.user_action_aggregation)
         plt.title('User Action')
         plt.ylabel('Action')
         plt.xlabel('Step')
 
-        plt.tight_layout(h_pad=2.5)
+        plt.tight_layout(h_pad=3)
 
         plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)), bbox_inches='tight')
         plt.show()
@@ -158,7 +158,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 50
+        episode_limit = 10
 
         user_action = None
 
