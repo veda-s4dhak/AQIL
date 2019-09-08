@@ -102,10 +102,10 @@ class CartpoleDQN:
         # Optimal action
         else:
             q_values = self.model.predict(state)
-            print("q_values: {}".format(q_values))
-            print(q_values.shape)
-            print("action_space: {}".format(self.action_space))
-            print("np.argmax(q_values[0]): {}".format(np.argmax(q_values[0])))
+            # print("q_values: {}".format(q_values))
+            # print(q_values.shape)
+            # print("action_space: {}".format(self.action_space))
+            # print("np.argmax(q_values[0]): {}".format(np.argmax(q_values[0])))
             return np.argmax(q_values[0])
 
     def experience_replay(self, save=True):

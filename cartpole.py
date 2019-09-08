@@ -16,7 +16,7 @@ class Cartpole():
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
 
-    IMITATION_MODE = True
+    IMITATION_MODE = False
 
     USER_ACTION = dict()
     USER_ACTION[1] = "APPLY FORCE LEFT"
@@ -37,7 +37,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "imitation.v2"
+        self.model_name = "RL50"
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Stores the loss values across all episodes
@@ -94,6 +94,8 @@ class Cartpole():
         print(self.loss_aggregation)
 
 
+        plt.figure(figsize=(8, 15))
+
         plt.subplot(4, 1, 1)
         plt.plot(self.loss_aggregation)
         plt.title('Model Loss')
@@ -118,9 +120,9 @@ class Cartpole():
         plt.ylabel('Action')
         plt.xlabel('Step')
 
-        plt.tight_layout()
+        plt.tight_layout(h_pad=2.5)
 
-        plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)))
+        plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)), bbox_inches='tight')
         plt.show()
 
         # Generating the dictionary from list
@@ -156,7 +158,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 40
+        episode_limit = 50
 
         user_action = None
 
@@ -199,16 +201,19 @@ class Cartpole():
                 machine_action = self.dqn.act(state)
 
                 self.machine_action_aggregation.append(machine_action)
-                self.user_action_aggregation.append(user_input - 1)
+
+                if self.IMITATION_MODE:
+                    user_input -= 1
+                    self.user_action_aggregation.append(user_input)
 
                 # Printing actions
                 if self.IMITATION_MODE:
-                    print("User Action: {} Machine Action: {}".format(user_input - 1, machine_action))
-                else:
-                    print("User Action: None Machine Action: {}".format(machine_action))
+                    print("User Action: {} Machine Action: {}".format(user_input, machine_action))
+                # else:
+                #     print("User Action: None Machine Action: {}".format(machine_action))
 
                 # Computing the state
-                state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input - 1)
+                state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input)
 
                 # Computing the reward
                 reward = reward if not terminal else -reward
@@ -223,26 +228,29 @@ class Cartpole():
                 # Setting the current state to be the next state
                 state = state_next
 
-                # Checking if game over
-                if terminal:
-                    print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
-                    self.reward_aggregation.append(r_eposiode)
-                    episode += 1
-                    break
-
                 # Post processing
-                if episode % 20 == 0:
+                if (episode % 20 == 0) and terminal:
                     print('Saving models...')
                     loss, r = self.dqn.experience_replay(save=True)
                 else:
                     loss, r = self.dqn.experience_replay(save=False)
+
+                # Checking if game over
+                if terminal:
+
+                    print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
+                    self.reward_aggregation.append(r_eposiode)
+                    episode += 1
+
+                    # input() # Debugging at the end of every episode
+                    break
 
                 # Adds loss to plot list, if replay buffer is ready for training
                 if loss != -1:
                     self.loss_aggregation.append(loss)
 
                 # Getting ready for next state
-                print("Reward: {} Step: {} Episode :{}".format(reward, step, episode))
+                print("Reward: {} Step: {} Episode: {} Loss: {}".format(reward, step, episode, loss))
 
         self.plot_data()
 

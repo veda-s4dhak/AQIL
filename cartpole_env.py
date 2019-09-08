@@ -131,7 +131,7 @@ class CartPoleEnv(gym.Env):
             else:
                 reward = self.gaussian_function(theta, np.deg2rad(6), 0)
 
-            print(reward)
+            # print(reward)
 
         elif self.steps_beyond_done is None:
             # Pole just fell!
