@@ -32,7 +32,7 @@ class CartpoleDQN:
     BATCH_SIZE = 20
 
     EXPLORATION_MAX = 1.0
-    EXPLORATION_MIN = 0.01
+    EXPLORATION_MIN = 0.1
     EXPLORATION_DECAY = 0.995
 
     def __init__(self, observation_space, action_space, model_name):
@@ -70,6 +70,9 @@ class CartpoleDQN:
         self.checkpoint = ModelCheckpoint(self.save_path, monitor='loss', verbose=0, save_best_only=False, mode='min')
         self.callbacks_list = [self.checkpoint]
         self.callbacks_save_disabled = []
+
+        # Previous reward initialization
+        self.prev_highest_reward = 0
 
     def remember(self, state, action, reward, next_state, done):
 
@@ -163,10 +166,20 @@ class CartpoleDQN:
                 rewards = rewards + [reward]
 
 
-            # Changing exploration rate after training
-            # This is equivalent to modifying your learning rate in supervised learning
-            self.exploration_rate *= self.EXPLORATION_DECAY
-            self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
+
+            if np.mean(rewards) > self.prev_highest_reward:
+
+                # Updating the mean reward
+                self.prev_highest_reward = np.mean(rewards)
+
+                # Changing exploration rate after training
+                # This is equivalent to modifying your learning rate in supervised learning
+                old_exploration_rate = self.exploration_rate
+                self.exploration_rate *= self.EXPLORATION_DECAY
+                self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
+                print("Exploration rate is updated from {} to {}".format(old_exploration_rate, self.exploration_rate))
+            else:
+                print("Exploration rate is currently {}".format(self.exploration_rate))
 
             # Returning the average loss if loss list is not empty
             return np.mean(loss), np.mean(rewards)

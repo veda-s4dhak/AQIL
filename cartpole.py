@@ -37,7 +37,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL10"
+        self.model_name = "RL500"
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Stores the loss values across all episodes
@@ -158,7 +158,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 10
+        episode_limit = 500
 
         user_action = None
 
@@ -169,7 +169,7 @@ class Cartpole():
             state = np.reshape(state, [1, self.observation_space])
             step = 0
 
-            r_eposiode = 0
+            r_episode = 0
 
             # Running the episode
             print('Episode: {}'.format(episode))
@@ -193,7 +193,7 @@ class Cartpole():
                     print("Saving model...")
                     loss, r = self.dqn.experience_replay(save=True)
                     self.loss_aggregation.append(loss)
-                    self.reward_aggregation.append(r_eposiode)
+                    self.reward_aggregation.append(r_episode)
                     print("Saved model.")
                     break
 
@@ -217,7 +217,7 @@ class Cartpole():
 
                 # Computing the reward
                 reward = reward if not terminal else -reward
-                r_eposiode += reward
+                r_episode += reward
 
                 # Computing the next state
                 state_next = np.reshape(state_next, [1, self.observation_space])
@@ -239,7 +239,7 @@ class Cartpole():
                 if terminal:
 
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
-                    self.reward_aggregation.append(r_eposiode)
+                    self.reward_aggregation.append(r_episode)
                     episode += 1
 
                     # input() # Debugging at the end of every episode
