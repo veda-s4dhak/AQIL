@@ -122,18 +122,11 @@ class CartPoleEnv(gym.Env):
 
         if not done:
 
-            # This is the reward used for imitation learning
-            if user_input:
-                reward = self.gaussian_function(x=action, sigma=0.5, mu=user_input) + self.gaussian_function(theta,
-                                                                                                             np.deg2rad(
-                                                                                                                 6), 0)
-            # This is the reward used for reinforcement learning
-            else:
-                reward = self.gaussian_function(theta, np.deg2rad(6), 0)
-
-            # print(reward)
+            # Assigns reward as Gaussian function of angle theta of pole
+            reward = self.gaussian_function(x=theta, sigma=np.deg2rad(6), mu=0)
 
         elif self.steps_beyond_done is None:
+
             # Pole just fell!
             self.steps_beyond_done = 0
             reward = 1.0
