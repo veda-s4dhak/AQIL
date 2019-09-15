@@ -37,7 +37,8 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL100"
+        self.model_name = "RL1000"
+
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Average training loss per step
@@ -51,6 +52,7 @@ class Cartpole():
 
         # Machine Action per Step
         self.machine_action_aggregation = []
+        self.score_aggregation = []
 
         # Creates directory if directory does not exist
         if not os.path.exists('.//models'):
@@ -161,6 +163,7 @@ class Cartpole():
 
         # Creates dict for Reward data
         reward_dict['Reward'] = self.reward_aggregation
+        # reward_dict['Reward'] = self.reward_aggregation
 
         # for episode_num in range(0, len(self.loss_aggregation)):
         #     loss_aggregation_dict[episode_num] = self.loss_aggregation[episode_num]
@@ -185,7 +188,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 100
+        episode_limit = 1000
 
         user_action = None
 
@@ -266,6 +269,7 @@ class Cartpole():
 
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
                     self.reward_aggregation.append(r_episode)
+                    self.score_aggregation.append(step)
                     episode += 1
 
                     # input() # Debugging at the end of every episode
