@@ -138,13 +138,13 @@ class CartpoleDQN:
             for state, action, reward, state_next, terminal in batch:
 
                 # Non-terminal reward
+
+                q_update = reward
                 if not terminal:
                     # Bellman equation
                     q_update = (reward + self.GAMMA * np.amax(self.model.predict(state_next)[0]))
 
-                # Terminal reward (reward at end of episode)
-                else:
-                    q_update = reward
+
 
                 # Output of the neural network (q values) given the state
                 q_values = self.model.predict(state)
@@ -175,9 +175,9 @@ class CartpoleDQN:
             #     old_exploration_rate = self.exploration_rate
             #     self.exploration_rate *= self.EXPLORATION_DECAY
             #     self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
-            #     print("Exploration rate is updated from {} to {}".format(old_exploration_rate, self.exploration_rate))
+            #     print("Exploration rate is updated from {} to {} Previous Best Reward: {}".format(old_exploration_rate, self.exploration_rate, self.prev_highest_reward))
             # else:
-            #     print("Exploration rate is currently {}".format(self.exploration_rate))
+            #     print("Exploration rate is currently {} Previous Best Reward: {}".format(self.exploration_rate, self.prev_highest_reward))
 
             # Changing exploration rate after training
             # This is equivalent to modifying your learning rate in supervised learning

@@ -123,7 +123,10 @@ class CartPoleEnv(gym.Env):
         if not done:
 
             # Assigns reward as Gaussian function of angle theta of pole
-            reward = self.gaussian_function(x=theta, sigma=np.deg2rad(6), mu=0)
+            if user_input is not None:
+                reward = self.gaussian_function(x=theta, sigma=np.deg2rad(10), mu=0) + self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
+            else:
+                reward = self.gaussian_function(x=theta, sigma=np.deg2rad(10), mu=0)
 
         elif self.steps_beyond_done is None:
 
