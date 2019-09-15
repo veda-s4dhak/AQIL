@@ -33,7 +33,7 @@ class CartpoleDQN:
 
     EXPLORATION_MAX = 1
     EXPLORATION_MIN = 0.01
-    EXPLORATION_DECAY = 0.995
+    EXPLORATION_DECAY = 0.8
 
     def __init__(self, observation_space, action_space, model_name):
 
