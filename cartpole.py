@@ -37,7 +37,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL50"
+        self.model_name = "RL10"
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
         # Stores the loss values across all episodes
@@ -45,6 +45,7 @@ class Cartpole():
         self.reward_aggregation = []
         self.user_action_aggregation = []
         self.machine_action_aggregation = []
+        self.score_aggregation = []
 
     @staticmethod
     def getch():
@@ -108,17 +109,23 @@ class Cartpole():
         plt.ylabel('Reward')
         plt.xlabel('Step')
 
-        plt.subplot(4, 1, 3)
-        plt.plot(self.machine_action_aggregation)
-        plt.title('Machine Action')
-        plt.ylabel('Action')
-        plt.xlabel('Step')
+        # plt.subplot(4, 1, 3)
+        # plt.plot(self.machine_action_aggregation)
+        # plt.title('Machine Action')
+        # plt.ylabel('Action')
+        # plt.xlabel('Step')
+        #
+        # plt.subplot(4, 1, 4)
+        # plt.plot(self.user_action_aggregation)
+        # plt.title('User Action')
+        # plt.ylabel('Action')
+        # plt.xlabel('Step')
 
         plt.subplot(4, 1, 4)
         plt.plot(self.user_action_aggregation)
-        plt.title('User Action')
-        plt.ylabel('Action')
-        plt.xlabel('Step')
+        plt.title('Score per Episode')
+        plt.ylabel('Score')
+        plt.xlabel('Episode')
 
         plt.tight_layout(h_pad=2.5)
 
@@ -134,6 +141,7 @@ class Cartpole():
         action_dict['User_Action'] = self.user_action_aggregation
         action_dict['Machine_Action'] = self.machine_action_aggregation
         reward_dict['Reward'] = self.reward_aggregation
+        # reward_dict['Reward'] = self.reward_aggregation
 
         # for episode_num in range(0, len(self.loss_aggregation)):
         #     loss_aggregation_dict[episode_num] = self.loss_aggregation[episode_num]
@@ -158,7 +166,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 50
+        episode_limit = 10
 
         user_action = None
 
@@ -240,6 +248,7 @@ class Cartpole():
 
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
                     self.reward_aggregation.append(r_eposiode)
+                    self.score_aggregation.append(step)
                     episode += 1
 
                     # input() # Debugging at the end of every episode
