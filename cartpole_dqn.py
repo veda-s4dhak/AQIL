@@ -71,6 +71,9 @@ class CartpoleDQN:
         self.callbacks_list = [self.checkpoint]
         self.callbacks_save_disabled = []
 
+        # Previous reward initialization
+        self.prev_highest_reward = 0
+
     def remember(self, state, action, reward, next_state, done):
 
         """
@@ -162,11 +165,25 @@ class CartpoleDQN:
                 loss = loss + history.history['loss']
                 rewards = rewards + [reward]
 
+            # if np.mean(rewards) > self.prev_highest_reward:
+            #
+            #     # Updating the mean reward
+            #     self.prev_highest_reward = np.mean(rewards)
+            #
+            #     # Changing exploration rate after training
+            #     # This is equivalent to modifying your learning rate in supervised learning
+            #     old_exploration_rate = self.exploration_rate
+            #     self.exploration_rate *= self.EXPLORATION_DECAY
+            #     self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
+            #     print("Exploration rate is updated from {} to {}".format(old_exploration_rate, self.exploration_rate))
+            # else:
+            #     print("Exploration rate is currently {}".format(self.exploration_rate))
 
             # Changing exploration rate after training
             # This is equivalent to modifying your learning rate in supervised learning
             self.exploration_rate *= self.EXPLORATION_DECAY
             self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
+            print("Exploration rate is currently {}".format(self.exploration_rate))
 
-            # Returning the average loss if loss list is not empty
+            # Returning average training loss and average training reward of current step
             return np.mean(loss), np.mean(rewards)

@@ -37,15 +37,28 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL10"
+        self.model_name = "RL100"
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
-        # Stores the loss values across all episodes
+        # Average training loss per step
         self.loss_aggregation = []
+
+        # Total Reward per Episode
         self.reward_aggregation = []
+
+        # User Action per Step
         self.user_action_aggregation = []
+
+        # Machine Action per Step
         self.machine_action_aggregation = []
         self.score_aggregation = []
+
+        # Creates directory if directory does not exist
+        if not os.path.exists('.//models'):
+            os.mkdir('.//models')
+
+        if not os.path.exists('.//plots'):
+            os.mkdir('.//plots')
 
     @staticmethod
     def getch():
@@ -92,54 +105,62 @@ class Cartpole():
         Plots the loss across the episodes which have been run
         """
 
-        print(self.loss_aggregation)
+        figure_title = '{} Experiment Results'.format(self.model_name)
 
+        fig = plt.figure(figure_title, figsize=(8, 15))
+        nrows = 4 if self.IMITATION_MODE else 3
 
-        plt.figure(figsize=(8, 15))
-
-        plt.subplot(4, 1, 1)
+        # Plots Model Loss graph
+        ax1 = fig.add_subplot(nrows, 1, 1)
         plt.plot(self.loss_aggregation)
+        ax1.set_yscale('log')
         plt.title('Model Loss')
-        plt.ylabel('Loss')
+        plt.ylabel('Average Loss')
         plt.xlabel('Step')
 
-        plt.subplot(4, 1, 2)
+        # Plots Reward graph
+        ax2 = plt.subplot(nrows, 1, 2)
         plt.plot(self.reward_aggregation)
         plt.title('Reward')
         plt.ylabel('Reward')
-        plt.xlabel('Step')
-
-        # plt.subplot(4, 1, 3)
-        # plt.plot(self.machine_action_aggregation)
-        # plt.title('Machine Action')
-        # plt.ylabel('Action')
-        # plt.xlabel('Step')
-        #
-        # plt.subplot(4, 1, 4)
-        # plt.plot(self.user_action_aggregation)
-        # plt.title('User Action')
-        # plt.ylabel('Action')
-        # plt.xlabel('Step')
-
-        plt.subplot(4, 1, 4)
-        plt.plot(self.user_action_aggregation)
-        plt.title('Score per Episode')
-        plt.ylabel('Score')
         plt.xlabel('Episode')
 
-        plt.tight_layout(h_pad=2.5)
+        # Plots Machine Action Graph
+        ax3 = plt.subplot(nrows, 1, 3)
+        plt.plot(self.machine_action_aggregation)
+        plt.title('Machine Action')
+        plt.ylabel('Action')
+        plt.xlabel('Step')
+
+        # Plots User Action Graph if IMITATION_MODE
+        if self.IMITATION_MODE:
+            ax4 = plt.subplot(nrows, 1, 4)
+            plt.plot(self.user_action_aggregation)
+            plt.title('User Action')
+            plt.ylabel('Action')
+            plt.xlabel('Step')
+
+        plt.tight_layout(pad=3, h_pad=3)
 
         plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)), bbox_inches='tight')
         plt.show()
 
-        # Generating the dictionary from list
+        # Generates dicts for saving to csv
         loss_aggregation_dict = dict()
         action_dict = dict()
         reward_dict = dict()
 
+        # Creates dict for loss data
         loss_aggregation_dict['Loss'] = self.loss_aggregation
-        action_dict['User_Action'] = self.user_action_aggregation
+
+        # Creates dict for User Action data if IMITATION_MODE
+        if self.IMITATION_MODE:
+            action_dict['User_Action'] = self.user_action_aggregation
+
+        # Creates dict for Machine Action data
         action_dict['Machine_Action'] = self.machine_action_aggregation
+
+        # Creates dict for Reward data
         reward_dict['Reward'] = self.reward_aggregation
         # reward_dict['Reward'] = self.reward_aggregation
 
@@ -166,7 +187,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 10
+        episode_limit = 100
 
         user_action = None
 
@@ -177,13 +198,14 @@ class Cartpole():
             state = np.reshape(state, [1, self.observation_space])
             step = 0
 
-            r_eposiode = 0
+            # Episode Reward
+            r_episode = 0
 
             # Running the episode
             print('Episode: {}'.format(episode))
             while True:
 
-                # Rendering the ste[
+                # Rendering the step
                 step += 1
                 self.env.render()
 
@@ -193,6 +215,8 @@ class Cartpole():
                     user_input = None
                 else:
                     user_input, user_action = self.get_user_input()
+                    user_input -= 1
+                    self.user_action_aggregation.append(user_input)
 
                 # Exiting on user request
                 # This will also save the model and plot the loss
@@ -201,33 +225,29 @@ class Cartpole():
                     print("Saving model...")
                     loss, r = self.dqn.experience_replay(save=True)
                     self.loss_aggregation.append(loss)
-                    self.reward_aggregation.append(r_eposiode)
+                    self.reward_aggregation.append(r_episode)
                     print("Saved model.")
                     break
 
                 # Getting the machine action
                 machine_action = self.dqn.act(state)
 
+                # Records machine action for step step
                 self.machine_action_aggregation.append(machine_action)
-
-                if self.IMITATION_MODE:
-                    user_input -= 1
-                    self.user_action_aggregation.append(user_input)
 
                 # Printing actions
                 if self.IMITATION_MODE:
                     print("User Action: {} Machine Action: {}".format(user_input, machine_action))
-                # else:
-                #     print("User Action: None Machine Action: {}".format(machine_action))
+                else:
+                    print("Machine Action: {}".format(machine_action))
 
                 # Computing the state
                 state_next, reward, terminal, info = self.env.step(machine_action, user_input=user_input)
 
                 # Computing the reward
                 reward = reward if not terminal else -reward
-                r_eposiode += reward
+                r_episode += reward
 
-                # Computing the next state
                 state_next = np.reshape(state_next, [1, self.observation_space])
 
                 # Storing the step for experience replay
@@ -239,15 +259,15 @@ class Cartpole():
                 # Post processing
                 if (episode % 20 == 0) and terminal:
                     print('Saving models...')
-                    loss, r = self.dqn.experience_replay(save=True)
+                    loss, r_step = self.dqn.experience_replay(save=True)
                 else:
-                    loss, r = self.dqn.experience_replay(save=False)
+                    loss, r_step = self.dqn.experience_replay(save=False)
 
                 # Checking if game over
                 if terminal:
 
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
-                    self.reward_aggregation.append(r_eposiode)
+                    self.reward_aggregation.append(r_episode)
                     self.score_aggregation.append(step)
                     episode += 1
 
