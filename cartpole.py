@@ -38,7 +38,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "RL1000"
+        self.model_name = "IL100"
 
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
@@ -220,7 +220,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 1000
+        episode_limit = 100
 
         user_action_string = None
 
@@ -303,7 +303,7 @@ class Cartpole():
                 state = state_next
 
                 # Post processing
-                if (episode % 20 == 0) and terminal:
+                if (episode % 1 == 0) and terminal:
                     print('Saving models...')
                     loss, r_step = self.dqn.experience_replay(save=True)
                 else:

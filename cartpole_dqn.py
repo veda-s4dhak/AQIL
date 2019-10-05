@@ -15,6 +15,8 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 import keras
 from datetime import datetime
+from keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
 
 
 class CartpoleDQN:
@@ -49,6 +51,15 @@ class CartpoleDQN:
 
         # The action space of the agent
         self.action_space = action_space
+
+        # Sets config for session (Allows gradual memory growth)
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        config.log_device_placement = True
+
+        # Sets Session for Keras
+        self.sess = tf.Session(config=config)
+        set_session(self.sess)
 
         # Replay buffer
         self.memory = deque(maxlen=self.MEMORY_SIZE)
