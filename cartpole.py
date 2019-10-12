@@ -16,8 +16,8 @@ class Cartpole():
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
 
-    IMITATION_MODE = False
-    PID_MODE = True
+    USER_IMITATION_MODE = False
+    PID_IMITATION_MODE = True
 
     USER_ACTION = dict()
     USER_ACTION[1] = "APPLY FORCE RIGHT"
@@ -38,7 +38,7 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "IL100"
+        self.model_name = "IL50"
 
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
@@ -130,7 +130,8 @@ class Cartpole():
 
         self.prev_error = error
 
-        return (1 if action < 0 else 2)
+        return (1 if action < 0
+                else 0)
 
     def plot_data(self):
 
@@ -141,7 +142,7 @@ class Cartpole():
         figure_title = '{} Experiment Results'.format(self.model_name)
 
         fig = plt.figure(figure_title, figsize=(8, 15))
-        nrows = 4 if self.IMITATION_MODE else 3
+        nrows = 4 if self.USER_IMITATION_MODE else 3
 
         # Plots Model Loss graph
         ax1 = fig.add_subplot(nrows, 1, 1)
@@ -166,7 +167,7 @@ class Cartpole():
         plt.xlabel('Step')
 
         # Plots User Action Graph if IMITATION_MODE
-        if self.IMITATION_MODE:
+        if self.USER_IMITATION_MODE:
             ax4 = plt.subplot(nrows, 1, 4)
             plt.plot(self.user_action_aggregation)
             plt.title('User Action')
@@ -187,7 +188,7 @@ class Cartpole():
         loss_aggregation_dict['Loss'] = self.loss_aggregation
 
         # Creates dict for User Action data if IMITATION_MODE
-        if self.IMITATION_MODE:
+        if self.USER_IMITATION_MODE:
             action_dict['User_Action'] = self.user_action_aggregation
 
         # Creates dict for Machine Action data
@@ -220,7 +221,7 @@ class Cartpole():
         episode = 0
 
         # The  maximum number of episodes to run
-        episode_limit = 100
+        episode_limit = 50
 
         user_action_string = None
 
@@ -243,7 +244,7 @@ class Cartpole():
                 self.env.render()
 
                 # Getting the user action based on the specified mode
-                if not self.IMITATION_MODE:
+                if not self.USER_IMITATION_MODE:
                     user_action_string = None
                     user_action = None
                 else:
@@ -251,11 +252,11 @@ class Cartpole():
                     user_action -= 1
                     self.user_action_aggregation.append(user_action)
 
-                if self.IMITATION_MODE:
+                if self.USER_IMITATION_MODE:
                     user_action, user_action_string = self.get_user_action()
                     user_action -= 1
                     self.user_action_aggregation.append(user_action)
-                elif self.PID_MODE:
+                elif self.PID_IMITATION_MODE:
                     pid_action = self.get_pid_action()
                     self.user_action_aggregation.append(pid_action)
                     user_action = pid_action
@@ -282,7 +283,7 @@ class Cartpole():
                 self.machine_action_aggregation.append(machine_action)
 
                 # Printing actions
-                if self.IMITATION_MODE or self.PID_MODE:
+                if self.USER_IMITATION_MODE or self.PID_IMITATION_MODE:
                     print("User Action: {} Machine Action: {}".format(user_action, machine_action))
                 else:
                     print("Machine Action: {}".format(machine_action))
