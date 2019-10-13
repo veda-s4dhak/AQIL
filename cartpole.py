@@ -17,7 +17,7 @@ class Cartpole():
     """
 
     USER_IMITATION_MODE = False
-    PID_IMITATION_MODE = True
+    PID_IMITATION_MODE = False
 
     USER_ACTION = dict()
     USER_ACTION[1] = "APPLY FORCE RIGHT"
@@ -38,7 +38,10 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-        self.model_name = "IL50"
+        self.model_name = "RL50"
+
+        # The maximum number of episodes to run
+        self.n_episodes = 50
 
         self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
 
@@ -220,12 +223,9 @@ class Cartpole():
         # The number of episodes which have completed
         episode = 0
 
-        # The  maximum number of episodes to run
-        episode_limit = 50
-
         user_action_string = None
 
-        while user_action_string != "EXIT" and episode <= episode_limit:
+        while user_action_string != "EXIT" and episode <= self.n_episodes:
 
             # Environment reset
             state = self.env.reset()
@@ -267,7 +267,6 @@ class Cartpole():
 
                 # Exiting on user request
                 # This will also save the model and plot the loss
-
                 if user_action_string == "EXIT":
                     print("Saving model...")
                     loss, r = self.dqn.experience_replay(save=True)
