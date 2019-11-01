@@ -27,31 +27,30 @@ class CartpoleDQN:
 
     ENV_NAME = "CartPole-v1"
 
-    GAMMA = 0.95
-    LEARNING_RATE = 1e-5
-
     MEMORY_SIZE = 1000000
     BATCH_SIZE = 20
 
-    EXPLORATION_MAX = 1.0
-    EXPLORATION_MIN = 0.01
-    EXPLORATION_DECAY = 0.995
-    EXPLORATION_POWER = 1.005
-
-    def __init__(self, observation_space, action_space, model_name):
+    def __init__(self, **kwargs):
 
         """
         Constructor
         """
 
+        self.GAMMA = kwargs['gamma']
+        self.LEARNING_RATE = kwargs['learning_rate']
+        self.EXPLORATION_MAX = kwargs['exploration_max']
+        self.EXPLORATION_MIN = kwargs['exploration_min']
+        self.EXPLORATION_DECAY = kwargs['exploration_decay']
+        self.EXPLORATION_POWER = kwargs['exploration_power']
+
         # The name under which to save the model
-        self.model_name = model_name
+        self.model_name = kwargs['model_name']
 
         # The chance of choosing a random action vs using output of the neural network (or lookup table)
-        self.exploration_rate = 1.00
+        self.exploration_rate = kwargs['exploration_rate']
 
         # The action space of the agent
-        self.action_space = action_space
+        self.action_space = kwargs['action_space']
 
         # Sets config for session (Allows gradual memory growth)
         config = tf.ConfigProto()
@@ -77,7 +76,7 @@ class CartpoleDQN:
             # Add threaded execution (Anish)
 
             self.model = Sequential()
-            self.model.add(Dense(128, input_shape=(observation_space,), activation="relu", kernel_initializer='he_normal'))
+            self.model.add(Dense(128, input_shape=(kwargs['observation_space'],), activation="relu", kernel_initializer='he_normal'))
             self.model.add(Dense(256, activation="relu", kernel_initializer='he_normal'))
             self.model.add(Dense(256, activation="relu", kernel_initializer='he_normal'))
             self.model.add(Dense(self.action_space, activation="linear"))

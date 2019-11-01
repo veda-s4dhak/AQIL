@@ -9,15 +9,14 @@ from cartpole_env import CartPoleEnv
 from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
 import pandas as pd
+import threading
+import time
+import tensorflow as tf
 
-
-class Cartpole():
+class Cartpole(threading.Thread):
     """
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
-
-    USER_IMITATION_MODE = False
-    PID_IMITATION_MODE = False
 
     USER_ACTION = dict()
     USER_ACTION[1] = "APPLY FORCE RIGHT"
@@ -26,11 +25,20 @@ class Cartpole():
 
     USER_INPUT_INDEX = [0, 1, 2]
 
-    def __init__(self):
+    def __init__(self, **kwargs):
 
         """
         Constructor
         """
+
+        # Thread initalization
+        threading.Thread.__init__(self)
+        self.threadID = kwargs['model_name']
+        self.name = kwargs['model_name']
+
+        # Setting configuration
+        self.USER_IMITATION_MODE = kwargs['user_imitation_mode']
+        self.PID_IMITATION_MODE = kwargs['pid_imitation_mode']
 
         # Initializing the environment
         self.env = CartPoleEnv()
@@ -38,16 +46,16 @@ class Cartpole():
         self.action_space = self.env.action_space.n
 
         # Initializing the neural network
-<<<<<<< HEAD
-        self.model_name = "IL10RL500"
-=======
-        self.model_name = "RL50"
+        self.model_name = kwargs['model_name']
 
         # The maximum number of episodes to run
-        self.n_episodes = 50
->>>>>>> f893633e2af78b4316c81e0a35db586f7fbc6ff5
+        self.n_episodes = kwargs['n_episodes']
 
-        self.dqn = CartpoleDQN(self.observation_space, self.action_space, model_name=self.model_name)
+        # Initializing the model
+        self.dqn_params = kwargs
+        self.dqn_params['observation_space'] = self.observation_space
+        self.dqn_params['action_space'] = self.action_space
+        self.dqn = CartpoleDQN(**self.dqn_params)
 
         # Average training loss per step
         self.loss_aggregation = []
@@ -223,13 +231,12 @@ class Cartpole():
         """
         Runs the cartpole game (main program entry point)
         """
-
         # The number of episodes which have completed
         episode = 0
 
         user_action_string = None
 
-        while user_action_string != "EXIT" and episode <= self.n_episodes:
+        while (user_action_string != "EXIT") and (episode <= self.n_episodes):
 
             # Environment reset
             state = self.env.reset()
@@ -307,11 +314,12 @@ class Cartpole():
                 state = state_next
 
                 # Post processing
-                if (episode % 1 == 0) and terminal:
-                    print('Saving models...')
-                    loss, r_step = self.dqn.experience_replay(save=True)
-                else:
-                    loss, r_step = self.dqn.experience_replay(save=False)
+                loss = 1
+                # if (episode % 1 == 0) and terminal:
+                #     print('Saving models...')
+                #     loss, r_step = self.dqn.experience_replay(save=True)
+                # else:
+                #     loss, r_step = self.dqn.experience_replay(save=False)
 
                 # Checking if game over
                 if terminal:
@@ -334,5 +342,54 @@ class Cartpole():
         self.plot_data()
 
 if __name__ == "__main__":
-    cartpole = Cartpole()
+
+    # config = dict()
+    # config['model_name'] = "RL200"
+    # config['n_episodes'] = 300
+    # config['user_imitation_mode'] = False
+    # config['pid_imitation_mode'] = True
+    #
+    # config['gamma'] = 0.95
+    # config['learning_rate'] = 1e-5
+    # config['exploration_max'] = 1.0
+    # config['exploration_min'] = 0.01
+    # config['exploration_decay'] = 0.995
+    # config['exploration_power'] = 1.005
+    # config['exploration_rate'] = 1.00
+    #
+    # cartpole = Cartpole(**config)
+    # cartpole.run()
+
+    config = dict()
+    config['model_name'] = "RL200"
+    config['n_episodes'] = 300
+    config['user_imitation_mode'] = False
+    config['pid_imitation_mode'] = True
+
+    config['gamma'] = 0.95
+    config['learning_rate'] = 1e-5
+    config['exploration_max'] = 0.9
+    config['exploration_min'] = 0.01
+    config['exploration_decay'] = 0.995
+    config['exploration_power'] = 1.005
+    config['exploration_rate'] = 1.00
+
+    cartpole = Cartpole(**config)
     cartpole.run()
+
+    # config = dict()
+    # config['model_name'] = "RL200"
+    # config['n_episodes'] = 300
+    # config['user_imitation_mode'] = False
+    # config['pid_imitation_mode'] = True
+    #
+    # config['gamma'] = 0.95
+    # config['learning_rate'] = 1e-5
+    # config['exploration_max'] = 1.0
+    # config['exploration_min'] = 0.01
+    # config['exploration_decay'] = 0.995
+    # config['exploration_power'] = 1.005
+    # config['exploration_rate'] = 1.00
+    #
+    # cartpole = Cartpole(**config)
+    # cartpole.run()
