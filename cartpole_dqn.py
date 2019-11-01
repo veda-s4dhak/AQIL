@@ -9,12 +9,14 @@ import numpy as np
 from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.optimizers import Adam
+from keras.optimizers import Adam, SGD
 import os
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 import keras
 from datetime import datetime
+from keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
 
 
 class CartpoleDQN:
@@ -26,14 +28,15 @@ class CartpoleDQN:
     ENV_NAME = "CartPole-v1"
 
     GAMMA = 0.95
-    LEARNING_RATE = 0.001
+    LEARNING_RATE = 1e-5
 
     MEMORY_SIZE = 1000000
     BATCH_SIZE = 20
 
-    EXPLORATION_MAX = 1
+    EXPLORATION_MAX = 1.0
     EXPLORATION_MIN = 0.01
-    EXPLORATION_DECAY = 0.8
+    EXPLORATION_DECAY = 0.995
+    EXPLORATION_POWER = 1.005
 
     def __init__(self, observation_space, action_space, model_name):
 
@@ -45,21 +48,41 @@ class CartpoleDQN:
         self.model_name = model_name
 
         # The chance of choosing a random action vs using output of the neural network (or lookup table)
-        self.exploration_rate = self.EXPLORATION_MAX
+        self.exploration_rate = 1.00
 
         # The action space of the agent
         self.action_space = action_space
+
+        # Sets config for session (Allows gradual memory growth)
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        config.log_device_placement = True
+
+        # Sets Session for Keras
+        self.sess = tf.Session(config=config)
+        set_session(self.sess)
 
         # Replay buffer
         self.memory = deque(maxlen=self.MEMORY_SIZE)
 
         # Initialize the model if it does not exist
         if not os.path.exists(os.path.join(".", "models", "{}.h5".format(self.model_name))):
+
+            # MODEL Optimization
+            # Fix error in the PID output (Anish) -> Need to verify
+            # Increase number of layers to 4 (Xiao Lei)
+            # Increase number of neurons per layer to 256 (Xiao Lei)
+            # Add residual networks to remove exploding gradients (hardest) (Xiao Lei)
+            # Reduce learning rate? (Xiao Lei)
+            # Add threaded execution (Anish)
+
             self.model = Sequential()
-            self.model.add(Dense(24, input_shape=(observation_space,), activation="relu"))
-            self.model.add(Dense(24, activation="relu"))
+            self.model.add(Dense(128, input_shape=(observation_space,), activation="relu", kernel_initializer='he_normal'))
+            self.model.add(Dense(256, activation="relu", kernel_initializer='he_normal'))
+            self.model.add(Dense(256, activation="relu", kernel_initializer='he_normal'))
             self.model.add(Dense(self.action_space, activation="linear"))
-            self.model.compile(loss="mse", optimizer=Adam(lr=self.LEARNING_RATE))
+            self.model.compile(loss="mse", optimizer=SGD(lr=self.LEARNING_RATE, momentum=0.95))
+
         # Otherwise load the model
         else:
             print('Loading model...')
@@ -144,8 +167,6 @@ class CartpoleDQN:
                     # Bellman equation
                     q_update = (reward + self.GAMMA * np.amax(self.model.predict(state_next)[0]))
 
-
-
                 # Output of the neural network (q values) given the state
                 q_values = self.model.predict(state)
 
@@ -165,20 +186,26 @@ class CartpoleDQN:
                 loss = loss + history.history['loss']
                 rewards = rewards + [reward]
 
+            # Updating the mean reward
+            self.prev_highest_reward = np.mean(rewards)
+
             # if np.mean(rewards) > self.prev_highest_reward:
-            #
-            #     # Updating the mean reward
-            #     self.prev_highest_reward = np.mean(rewards)
             #
             #     # Changing exploration rate after training
             #     # This is equivalent to modifying your learning rate in supervised learning
             #     old_exploration_rate = self.exploration_rate
             #     self.exploration_rate *= self.EXPLORATION_DECAY
             #     self.exploration_rate = max(self.EXPLORATION_MIN, self.exploration_rate)
-            #     print("Exploration rate is updated from {} to {} Previous Best Reward: {}".format(old_exploration_rate, self.exploration_rate, self.prev_highest_reward))
+            #     print("Exploration rate is updated from {} to {} Previous Best Reward: {}".format(old_exploration_rate,
+            #                                                                                       self.exploration_rate,
+            #                                                                                       self.prev_highest_reward))
             # else:
-            #     print("Exploration rate is currently {} Previous Best Reward: {}".format(self.exploration_rate, self.prev_highest_reward))
-
+            #     old_exploration_rate = self.exploration_rate
+            #     self.exploration_rate *= self.EXPLORATION_POWER
+            #     self.exploration_rate = min(self.EXPLORATION_MAX, self.exploration_rate)
+            #     print("Exploration rate is updated from {} to {} Previous Best Reward: {}".format(old_exploration_rate,
+            #                                                                                       self.exploration_rate,
+            #                                                                                       self.prev_highest_reward))
             # Changing exploration rate after training
             # This is equivalent to modifying your learning rate in supervised learning
             self.exploration_rate *= self.EXPLORATION_DECAY
