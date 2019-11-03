@@ -13,7 +13,8 @@ import threading
 import time
 import tensorflow as tf
 
-class Cartpole(threading.Thread):
+
+class Cartpole:
     """
     Cartpole runs the game using the deep neural network and the OpenAI Gym
     """
@@ -30,9 +31,6 @@ class Cartpole(threading.Thread):
         """
         Constructor
         """
-
-        # Thread initalization
-        threading.Thread.__init__(self)
         self.threadID = kwargs['model_name']
         self.name = kwargs['model_name']
 
@@ -141,7 +139,7 @@ class Cartpole(threading.Thread):
         self.P = error
         self.I += error
         self.D = error - self.prev_error
-        action = kP*self.P + kI*self.I + kD*self.D
+        action = kP * self.P + kI * self.I + kD * self.D
 
         self.prev_error = error
 
@@ -275,7 +273,6 @@ class Cartpole(threading.Thread):
                     user_action_string = None
                     user_action = None
 
-
                 # Exiting on user request
                 # This will also save the model and plot the loss
                 if user_action_string == "EXIT":
@@ -323,7 +320,6 @@ class Cartpole(threading.Thread):
 
                 # Checking if game over
                 if terminal:
-
                     print("Episode: {} Exploration: {} Score: {}".format(episode, self.dqn.exploration_rate, step))
                     self.reward_aggregation.append(r_episode)
                     self.score_aggregation.append(step)
@@ -341,8 +337,13 @@ class Cartpole(threading.Thread):
 
         self.plot_data()
 
-if __name__ == "__main__":
 
+def run_cartpole(cfg):
+    cp = Cartpole(**cfg)
+    cp.run()
+
+
+if __name__ == "__main__":
     # config = dict()
     # config['model_name'] = "RL200"
     # config['n_episodes'] = 300
@@ -362,9 +363,9 @@ if __name__ == "__main__":
 
     config = dict()
     config['model_name'] = "RL200"
-    config['n_episodes'] = 300
+    config['n_episodes'] = 200
     config['user_imitation_mode'] = False
-    config['pid_imitation_mode'] = True
+    config['pid_imitation_mode'] = False
 
     config['gamma'] = 0.95
     config['learning_rate'] = 1e-5
@@ -374,8 +375,12 @@ if __name__ == "__main__":
     config['exploration_power'] = 1.005
     config['exploration_rate'] = 1.00
 
-    cartpole = Cartpole(**config)
-    cartpole.run()
+    # x = threading.Thread(target=run_cartpole, args=(config,))
+    # x.start()
+
+    run_cartpole(config)
+    # cartpole = Cartpole(**config)
+    # cartpole.run()
 
     # config = dict()
     # config['model_name'] = "RL200"
