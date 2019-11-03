@@ -1,0 +1,49 @@
+================================================================================
+                                       LOG
+================================================================================
+
+Observations:
+-------------
+
+1) RL Alone
+    -> RL50: Reward went up to 600
+    -> RL100: Reward went up to 200
+    -> RL200: Reward stayed below 80
+    -> RL1000: Reward went up to 3000
+
+2) IL followed by RL
+    -> IL10RL500:
+        -> Reward is very high and then goes down significantly
+        -> Model loss increases sharply at end when (i.e. RL diverges from IL)
+    -> IL100RL10:
+        -> Reward goes down sharply at the beginning
+        -> After 50 episodes, the loss increases
+    -> IL100RL20:
+        -> Reward increases then decreases
+        -> Model loss stays relatively the same
+
+Questions/Thoughts:
+----------
+
+-> Training parameters may have been different between the 4 runs listed above.
+    -> First of all we need labels on the graphs which show parameters
+    -> **CRITICAL**
+
+-> May want to consider avg reward vs. max reward? <- For time being we can visually  observe this
+-> May want to consider how fast the reward is rising? <- For time being we can visually  observe this
+
+-> During reinforcement learning after imitation learning the model reward decreases sharply, why?
+
+(1) What could be the reasons for the reinforcement learning to diverge from imitation learning?
+    -> Maybe after IL the loss is very low, but then the RL learning rate is high
+       which means the loss will diverge. Model is at a local minimum and is sensitive to training.
+        -> This will cause exploding gradients
+        -> In general the model will diverge very easily
+
+    -> What if we keep the IL model as a copy and have a second model training the RL
+        -> Tune the learning rate?
+
+    -> What if we keep 3 models, RL1, RL2, IL
+        -> How do we bring the model back up (to bring RL2 loss low again after it diverges)
+
+    ->

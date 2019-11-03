@@ -9,9 +9,7 @@ from cartpole_env import CartPoleEnv
 from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
 import pandas as pd
-import threading
-import time
-import tensorflow as tf
+import json
 
 
 class Cartpole:
@@ -31,6 +29,9 @@ class Cartpole:
         """
         Constructor
         """
+
+        self.config = kwargs
+
         self.threadID = kwargs['model_name']
         self.name = kwargs['model_name']
 
@@ -123,11 +124,10 @@ class Cartpole:
     def get_pid_action(self):
 
         # PID Constants
-        kP = 0.3
-        kI = 0.1
-        kD = 10
+        kP = self.config["P"] # 0.3 Optimal
+        kI = self.config["I"] # 0.1 Optimal
+        kD = self.config["D"] # 10 Optimal
         desired_angle = 0
-        period = 0.02
 
         # 1) Get the pole angle
         pole_angle = self.env.theta
@@ -191,6 +191,9 @@ class Cartpole:
 
         plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)), bbox_inches='tight')
         plt.show()
+
+        with open(os.path.join(".", "plots", "{}.txt".format(self.model_name)), 'w') as f:
+            json.dump(self.config, f)
 
         # Generates dicts for saving to csv
         loss_aggregation_dict = dict()
@@ -312,11 +315,11 @@ class Cartpole:
 
                 # Post processing
                 loss = 1
-                # if (episode % 1 == 0) and terminal:
-                #     print('Saving models...')
-                #     loss, r_step = self.dqn.experience_replay(save=True)
-                # else:
-                #     loss, r_step = self.dqn.experience_replay(save=False)
+                if (episode % 1 == 0) and terminal:
+                    print('Saving models...')
+                    loss, r_step = self.dqn.experience_replay(save=True)
+                else:
+                    loss, r_step = self.dqn.experience_replay(save=False)
 
                 # Checking if game over
                 if terminal:
@@ -362,10 +365,14 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "RL200"
-    config['n_episodes'] = 200
+    config['model_name'] = "RL5"
+    config['n_episodes'] = 5
     config['user_imitation_mode'] = False
-    config['pid_imitation_mode'] = False
+    config['pid_imitation_mode'] = True
+
+    config["P"] = 0.6
+    config["I"] = 0.00625
+    config["D"] = 0.8
 
     config['gamma'] = 0.95
     config['learning_rate'] = 1e-5
