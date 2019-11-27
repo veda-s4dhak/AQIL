@@ -365,22 +365,25 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "IL250"
-    config['n_episodes'] = 250
+    config['model_name'] = "IL100_RL50"
+    config['n_episodes'] = 50
     config['user_imitation_mode'] = False
-    config['pid_imitation_mode'] = True
+    config['pid_imitation_mode'] = False
 
     config["P"] = 0.6
     config["I"] = 0.00625
     config["D"] = 0.8
 
     config['gamma'] = 0.95
+
+    # Default lr: 1e-3
     config['learning_rate'] = 1e-5
+
     config['exploration_max'] = 0.9
     config['exploration_min'] = 0.01
     config['exploration_decay'] = 0.995
     config['exploration_power'] = 1.005
-    config['exploration_rate'] = 1.00
+    config['exploration_rate'] = 0.9
 
     # x = threading.Thread(target=run_cartpole, args=(config,))
     # x.start()

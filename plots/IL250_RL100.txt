@@ -1,0 +1,1 @@
+{"model_name": "IL250_RL100", "n_episodes": 100, "user_imitation_mode": false, "pid_imitation_mode": false, "P": 0.6, "I": 0.00625, "D": 0.8, "gamma": 0.95, "learning_rate": 1e-05, "exploration_max": 0.9, "exploration_min": 0.01, "exploration_decay": 0.995, "exploration_power": 1.005, "exploration_rate": 0.3, "observation_space": 4, "action_space": 2}
