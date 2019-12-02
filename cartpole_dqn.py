@@ -14,6 +14,7 @@ import os
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
 import keras
+from keras import backend as K
 from datetime import datetime
 from keras.backend.tensorflow_backend import set_session
 import tensorflow as tf
@@ -86,6 +87,10 @@ class CartpoleDQN:
         else:
             print('Loading model...')
             self.model = load_model(os.path.join(".", "models", "{}.h5".format(self.model_name)))
+
+        inp = self.model.input  # input placeholder
+        outputs = [layer.output for layer in self.model.layers]  # all layer outputs
+        functor = K.function([inp, K.learning_phase()], outputs)
 
         # Model save configuration
         self.save_path = os.path.join(".", "models", "{}.h5".format(self.model_name))

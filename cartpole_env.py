@@ -125,9 +125,20 @@ class CartPoleEnv(gym.Env):
         if not done:
 
             # Assigns reward as Gaussian function of angle theta of pole
+            # Bell curve of reward will be different (but this is expected)
             if user_input is not None:
-                reward = self.gaussian_function(x=self.theta, sigma=np.deg2rad(10), mu=0) + self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
+
+                # Even if angle is 0, reward may not be high if the machine action is not equal to user action
+                # Even if angle is high in magnitude, reward may not be low if the machine action is equal to the user action
+                # This is is so that the DQN is optimizes for future reward
+                # The Bellman will optimize for best long term user action prediction
+                reward = 0.2*self.gaussian_function(x=self.theta, sigma=np.deg2rad(10), mu=0) + 0.8*self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
+                # reward = self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
+
             else:
+
+                # If angle is close to zero then rewards is higher and vice versa
+                # The Bellman should optimize for best long term angle
                 reward = self.gaussian_function(x=self.theta, sigma=np.deg2rad(10), mu=0)
 
         elif self.steps_beyond_done is None:
