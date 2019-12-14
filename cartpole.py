@@ -69,6 +69,9 @@ class Cartpole:
         self.machine_action_aggregation = []
         self.score_aggregation = []
 
+        # List of lists of output activations for each layer
+        self.layer_outputs_list = []
+
         # Creates directory if directory does not exist
         if not os.path.exists('.//models'):
             os.mkdir('.//models')
@@ -227,6 +230,8 @@ class Cartpole:
         df = pd.DataFrame.from_dict(reward_dict)
         df.to_csv(os.path.join(".", "plots", "{}.csv".format(self.model_name + '_reward')), header=True, index=True)
 
+        np.save(os.path.join(".", "plots", "{}.npy".format(self.model_name + '_activations')), self.layer_outputs_list)
+
     def run(self):
 
         """
@@ -280,7 +285,9 @@ class Cartpole:
                 # This will also save the model and plot the loss
                 if user_action_string == "EXIT":
                     print("Saving model...")
-                    loss, r = self.dqn.experience_replay(save=True)
+                    loss, r, layer_outputs = self.dqn.experience_replay(save=True)
+                    if layer_outputs != -1:
+                        self.layer_outputs_list += layer_outputs
                     self.loss_aggregation.append(loss)
                     self.reward_aggregation.append(r_episode)
                     print("Saved model.")
@@ -317,9 +324,12 @@ class Cartpole:
                 loss = 1
                 if (episode % 1 == 0) and terminal:
                     print('Saving models...')
-                    loss, r_step = self.dqn.experience_replay(save=True)
+                    loss, r_step, layer_outputs = self.dqn.experience_replay(save=True)
                 else:
-                    loss, r_step = self.dqn.experience_replay(save=False)
+                    loss, r_step, layer_outputs = self.dqn.experience_replay(save=False)
+
+                if layer_outputs != -1:
+                    self.layer_outputs_list += layer_outputs
 
                 # Checking if game over
                 if terminal:
@@ -365,8 +375,8 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "IL500_RL10_new"
-    config['n_episodes'] = 10
+    config['model_name'] = "RL250"
+    config['n_episodes'] = 250
     config['user_imitation_mode'] = False
     config['pid_imitation_mode'] = False
 

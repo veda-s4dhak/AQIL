@@ -90,7 +90,9 @@ class CartpoleDQN:
 
         inp = self.model.input  # input placeholder
         outputs = [layer.output for layer in self.model.layers]  # all layer outputs
-        functor = K.function([inp, K.learning_phase()], outputs)
+
+        # Functor for extracting outputs of each layer of self.model
+        self.functor = K.function([inp, K.learning_phase()], outputs)
 
         # Model save configuration
         self.save_path = os.path.join(".", "models", "{}.h5".format(self.model_name))
@@ -149,7 +151,7 @@ class CartpoleDQN:
         # If there are not enough steps across all episodes to accommodate the
         # minimum batch size then do not train
         if len(self.memory) < self.BATCH_SIZE:
-            return -1, -1
+            return -1, -1, -1
 
         # If there are enough steps then train
         else:
@@ -160,6 +162,7 @@ class CartpoleDQN:
             # The loss values across the entire batch
             loss = []
             rewards = []
+            layer_output_list = []
 
             # Iterating through each step in the batch
             for state, action, reward, state_next, terminal in batch:
@@ -173,6 +176,10 @@ class CartpoleDQN:
 
                 # Output of the neural network (q values) given the state
                 q_values = self.model.predict(state)
+
+                # Calls function to extract activations of each layer; 1 = Train Mode
+                layer_outs = self.functor([state, 1.])
+                layer_output_list = layer_output_list + [[state] + layer_outs]
 
                 # Action is the action which was taken in the state within the episode
                 # This action is/was thought to be the optimal action before training
@@ -217,4 +224,4 @@ class CartpoleDQN:
             print("Exploration rate is currently {}".format(self.exploration_rate))
 
             # Returning average training loss and average training reward of current step
-            return np.mean(loss), np.mean(rewards)
+            return np.mean(loss), np.mean(rewards), layer_output_list
