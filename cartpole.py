@@ -221,6 +221,9 @@ class Cartpole:
             layer
             in range(5)]
 
+        print(self.max_act_inputs_by_layer[1])
+        print(self.max_act_inputs_by_layer[2])
+
         # for i in range(len(self.max_act_inputs_by_layer)):
         #     print('N_Activations: {} Input_Shape: {}'.format(len(self.max_act_inputs_by_layer[i]),
         #                                                      self.max_act_inputs_by_layer[i][0].shape))
