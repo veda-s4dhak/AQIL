@@ -140,6 +140,14 @@ class CartpoleDQN:
             # print("np.argmax(q_values[0]): {}".format(np.argmax(q_values[0])))
             return np.argmax(q_values[0])
 
+    def get_weights(self):
+        """
+            Gets weights of model
+            :return: list pairs containing: weight and bias
+        """
+
+        return [(layer.get_weights()[0], layer.get_weights()[1]) for layer in self.model.layers]
+
     def experience_replay(self, save=True):
 
         """

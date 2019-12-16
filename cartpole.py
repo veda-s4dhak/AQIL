@@ -3,6 +3,7 @@ This is the main application entry point. It runs the cartpole game
 via the cartpole_dqn and cartpole_env modules.
 """
 
+
 import numpy as np
 import sys, termios, tty, os
 from cartpole_env import CartPoleEnv
@@ -10,6 +11,10 @@ from cartpole_dqn import CartpoleDQN
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
+import pylab as pl
+from matplotlib import cm
+from scipy import interpolate
+from scipy import ndimage
 
 
 class Cartpole:
@@ -193,36 +198,47 @@ class Cartpole:
         plt.tight_layout(pad=3, h_pad=3)
 
         plt.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name)), bbox_inches='tight')
+
+        # https://stackoverflow.com/questions/34732305/contour-plot-of-2d-array-in-matplotlib
+        # Plots weight contours
+
+        self.model_weights = self.dqn.get_weights()
+        weight_fig, weight_axes = pl.subplots(1, 4, figsize=(10, 10))
+
+        for i in range(4):
+            h, w = self.model_weights[i][0].shape
+            X, Y = np.mgrid[0:1:(h*1j), 0:1:(w*1j)]
+            c1 = weight_axes[i].contourf(X, Y, self.model_weights[i][0])
+            pl.colorbar(c1, ax=weight_axes[i])
+
+        plt.tight_layout()
+        weight_fig.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name + '_weights')), bbox_inches='tight')
         plt.show()
 
         # Plots max activations of each layer
-
         # Stacks data by layer
         self.acts_by_layer = [
             np.stack([self.layer_outputs_list[i][layer] for i in range(len(self.layer_outputs_list))], axis=-1)
             for layer in range(5)]
-        print(self.acts_by_layer[0].shape)
-        print(self.acts_by_layer[1].shape)
-        print(self.acts_by_layer[2].shape)
-        print(self.acts_by_layer[3].shape)
-        print(self.acts_by_layer[4].shape)
+        # print(self.acts_by_layer[0].shape)
+        # print(self.acts_by_layer[1].shape)
+        # print(self.acts_by_layer[2].shape)
+        # print(self.acts_by_layer[3].shape)
+        # print(self.acts_by_layer[4].shape)
 
         # Gets indices of max values along batch axis
         self.batch_indices_by_layer = [np.argmax(self.acts_by_layer[layer], axis=-1) for layer in range(5)]
-        print(self.batch_indices_by_layer[0].shape)
-        print(self.batch_indices_by_layer[1].shape)
-        print(self.batch_indices_by_layer[2].shape)
-        print(self.batch_indices_by_layer[3].shape)
-        print(self.batch_indices_by_layer[4].shape)
+        # print(self.batch_indices_by_layer[0].shape)
+        # print(self.batch_indices_by_layer[1].shape)
+        # print(self.batch_indices_by_layer[2].shape)
+        # print(self.batch_indices_by_layer[3].shape)
+        # print(self.batch_indices_by_layer[4].shape)
 
         # Gets input for each max activation by layer
         self.max_act_inputs_by_layer = [
             [self.acts_by_layer[0][:, :, i] for i in np.reshape(self.batch_indices_by_layer[layer], [-1])] for
             layer
             in range(5)]
-
-        print(self.max_act_inputs_by_layer[1])
-        print(self.max_act_inputs_by_layer[2])
 
         # for i in range(len(self.max_act_inputs_by_layer)):
         #     print('N_Activations: {} Input_Shape: {}'.format(len(self.max_act_inputs_by_layer[i]),
@@ -380,6 +396,9 @@ class Cartpole:
                 print("Reward: {} Step: {} Episode: {} Loss: {}".format(reward, step, episode, loss))
 
         self.plot_data()
+
+
+
 
 
 def run_cartpole(cfg):
