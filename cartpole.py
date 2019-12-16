@@ -203,13 +203,15 @@ class Cartpole:
         # Plots weight contours
 
         self.model_weights = self.dqn.get_weights()
-        weight_fig, weight_axes = pl.subplots(1, 4, figsize=(10, 10))
+        weight_fig, weight_axes = plt.subplots(1, 4, figsize=(10, 10))
 
         for i in range(4):
             h, w = self.model_weights[i][0].shape
             X, Y = np.mgrid[0:1:(h*1j), 0:1:(w*1j)]
             c1 = weight_axes[i].contourf(X, Y, self.model_weights[i][0])
-            pl.colorbar(c1, ax=weight_axes[i])
+            plt.colorbar(c1, ax=weight_axes[i])
+            weight_axes[i].set_title('Layer {}'.format(i+1))
+            print('Layer {} Weight Shape: ({}, {})'.format(i+1, h, w))
 
         plt.tight_layout()
         weight_fig.savefig(os.path.join(".", "plots", "{}.png".format(self.model_name + '_weights')), bbox_inches='tight')
