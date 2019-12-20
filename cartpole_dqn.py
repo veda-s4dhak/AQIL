@@ -186,8 +186,8 @@ class CartpoleDQN:
                 q_values = self.model.predict(state)
 
                 # Calls function to extract activations of each layer; 1 = Train Mode
-                layer_outs = self.functor([state, 1.])
-                layer_output_list = layer_output_list + [[state] + layer_outs]
+                # layer_outs = self.functor([state, 1.])
+                # layer_output_list = layer_output_list + [[state] + layer_outs]
 
                 # Action is the action which was taken in the state within the episode
                 # This action is/was thought to be the optimal action before training

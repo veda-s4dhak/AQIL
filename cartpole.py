@@ -219,9 +219,9 @@ class Cartpole:
 
         # Plots max activations of each layer
         # Stacks data by layer
-        self.acts_by_layer = [
-            np.stack([self.layer_outputs_list[i][layer] for i in range(len(self.layer_outputs_list))], axis=-1)
-            for layer in range(5)]
+        # self.acts_by_layer = [
+        #     np.stack([self.layer_outputs_list[i][layer] for i in range(len(self.layer_outputs_list))], axis=-1)
+        #     for layer in range(5)]
         # print(self.acts_by_layer[0].shape)
         # print(self.acts_by_layer[1].shape)
         # print(self.acts_by_layer[2].shape)
@@ -229,7 +229,7 @@ class Cartpole:
         # print(self.acts_by_layer[4].shape)
 
         # Gets indices of max values along batch axis
-        self.batch_indices_by_layer = [np.argmax(self.acts_by_layer[layer], axis=-1) for layer in range(5)]
+        # self.batch_indices_by_layer = [np.argmax(self.acts_by_layer[layer], axis=-1) for layer in range(5)]
         # print(self.batch_indices_by_layer[0].shape)
         # print(self.batch_indices_by_layer[1].shape)
         # print(self.batch_indices_by_layer[2].shape)
@@ -237,10 +237,10 @@ class Cartpole:
         # print(self.batch_indices_by_layer[4].shape)
 
         # Gets input for each max activation by layer
-        self.max_act_inputs_by_layer = [
-            [self.acts_by_layer[0][:, :, i] for i in np.reshape(self.batch_indices_by_layer[layer], [-1])] for
-            layer
-            in range(5)]
+        # self.max_act_inputs_by_layer = [
+        #     [self.acts_by_layer[0][:, :, i] for i in np.reshape(self.batch_indices_by_layer[layer], [-1])] for
+        #     layer
+        #     in range(5)]
 
         # for i in range(len(self.max_act_inputs_by_layer)):
         #     print('N_Activations: {} Input_Shape: {}'.format(len(self.max_act_inputs_by_layer[i]),
@@ -427,8 +427,8 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "RL10"
-    config['n_episodes'] = 10
+    config['model_name'] = "RL250"
+    config['n_episodes'] = 250
     config['user_imitation_mode'] = False
     config['pid_imitation_mode'] = False
 
@@ -439,13 +439,13 @@ if __name__ == "__main__":
     config['gamma'] = 0.95
 
     # Default lr: 1e-3
-    config['learning_rate'] = 1e-7
+    config['learning_rate'] = 1e-5
 
-    config['exploration_max'] = 0.95
+    config['exploration_max'] = 1.0
     config['exploration_min'] = 0.01
     config['exploration_decay'] = 0.995
     config['exploration_power'] = 1.005
-    config['exploration_rate'] = 0.95
+    config['exploration_rate'] = 0.3
 
     # x = threading.Thread(target=run_cartpole, args=(config,))
     # x.start()
