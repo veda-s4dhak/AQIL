@@ -163,7 +163,7 @@ class Cartpole:
         figure_title = '{} Experiment Results'.format(self.model_name)
 
         fig = plt.figure(figure_title, figsize=(8, 15))
-        nrows = 4 if self.USER_IMITATION_MODE else 3
+        nrows = 5 if self.USER_IMITATION_MODE else 4
 
         # Plots Model Loss graph
         ax1 = fig.add_subplot(nrows, 1, 1)
@@ -187,13 +187,21 @@ class Cartpole:
         plt.ylabel('Action')
         plt.xlabel('Step')
 
+        # Plots Score
+        ax4 = plt.subplot(nrows, 1, 4)
+        plt.plot(self.score_aggregation)
+        plt.title('Score')
+        plt.ylabel('Score')
+        plt.xlabel('Episode')
+
         # Plots User Action Graph if IMITATION_MODE
         if self.USER_IMITATION_MODE:
-            ax4 = plt.subplot(nrows, 1, 4)
+            ax5 = plt.subplot(nrows, 1, 5)
             plt.plot(self.user_action_aggregation)
             plt.title('User Action')
             plt.ylabel('Action')
             plt.xlabel('Step')
+
 
         plt.tight_layout(pad=3, h_pad=3)
 
@@ -291,7 +299,7 @@ class Cartpole:
 
         user_action_string = None
 
-        while (user_action_string != "EXIT") and (episode <= self.n_episodes):
+        while (user_action_string != "EXIT") and (episode < self.n_episodes):
 
             # Environment reset
             state = self.env.reset()
@@ -427,10 +435,10 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "IL250"
-    config['n_episodes'] = -1
+    config['model_name'] = "IL50"
+    config['n_episodes'] = 50
     config['user_imitation_mode'] = False
-    config['pid_imitation_mode'] = False
+    config['pid_imitation_mode'] = True
 
     config["P"] = 0.6
     config["I"] = 0.00625
