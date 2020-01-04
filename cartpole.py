@@ -435,8 +435,8 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "IL50"
-    config['n_episodes'] = 50
+    config['model_name'] = "IL250"
+    config['n_episodes'] = 250
     config['user_imitation_mode'] = False
     config['pid_imitation_mode'] = True
 
@@ -454,9 +454,6 @@ if __name__ == "__main__":
     config['exploration_decay'] = 0.995
     config['exploration_power'] = 1.005
     config['exploration_rate'] = 0.3
-
-    # x = threading.Thread(target=run_cartpole, args=(config,))
-    # x.start()
 
     run_cartpole(config)
     # cartpole = Cartpole(**config)

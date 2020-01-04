@@ -64,7 +64,7 @@ class CartPoleEnv(gym.Env):
         self.kinematics_integrator = 'euler'
 
         # Angle at which to fail the episode
-        self.theta_threshold_radians = 50 * 2 * math.pi / 360 # 12 * 2 * math.pi / 360
+        self.theta_threshold_radians = 50 * math.pi / 180  # 12 * math.pi / 180
         self.x_threshold = 2.4
 
         # Angle limit set to 2 * theta_threshold_radians so failing observation is still within bounds
@@ -134,7 +134,10 @@ class CartPoleEnv(gym.Env):
                 # The Bellman will optimize for best long term user action prediction
 
                 # Learning a reward ditribution based on model action's similarity to action of PID controller.
-                reward = 0.2*self.gaussian_function(x=self.theta, sigma=np.deg2rad(10), mu=0) + 0.8*self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
+                reward = 0.2 * self.gaussian_function(x=self.theta, sigma=np.deg2rad(10),
+                                                      mu=0) + 0.8 * self.gaussian_function(x=action,
+                                                                                           sigma=np.deg2rad(10),
+                                                                                           mu=user_input)
                 # reward = self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
 
             else:
