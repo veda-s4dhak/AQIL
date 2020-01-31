@@ -136,7 +136,7 @@ class CartPoleEnv(gym.Env):
                 # Learning a reward ditribution based on model action's similarity to action of PID controller.
                 reward = 0.2 * self.gaussian_function(x=self.theta, sigma=np.deg2rad(10),
                                                       mu=0) + 0.8 * self.gaussian_function(x=action,
-                                                                                           sigma=np.deg2rad(10),
+                                                                                           sigma=np.deg2rad(0.5),
                                                                                            mu=user_input)
                 # reward = self.gaussian_function(x=action, sigma=np.deg2rad(10), mu=user_input)
 
