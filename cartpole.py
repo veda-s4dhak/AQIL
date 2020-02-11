@@ -435,8 +435,8 @@ if __name__ == "__main__":
     # cartpole.run()
 
     config = dict()
-    config['model_name'] = "IL250"
-    config['n_episodes'] = 250
+    config['model_name'] = "IL500"
+    config['n_episodes'] = 500
     config['user_imitation_mode'] = False
     config['pid_imitation_mode'] = True
 

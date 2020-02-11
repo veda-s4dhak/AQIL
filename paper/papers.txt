@@ -1,0 +1,2 @@
+Learning to Reinforcement Learn By Imitation https://openreview.net/pdf?id=HJG1Uo09Fm
+Extacting Expert's Reward via Inverse Reforcement Learning followed by RL: http://proceedings.mlr.press/v97/wang19d/wang19d.pdf
