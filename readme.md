@@ -1,1 +1,3 @@
- <embed src="https://sumanbogati.github.io/sample.pdf" width="600px" height="500px" />
+# Augmented Q-Imitation-Learning
+
+https://github.com/veda-s4dhak/AQIL/blob/master/paper/paper_draft_v4.pdf
