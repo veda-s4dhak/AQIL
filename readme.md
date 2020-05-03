@@ -1,3 +1,3 @@
 # Augmented Q-Imitation-Learning
 
-https://github.com/veda-s4dhak/AQIL/blob/master/paper/paper_draft_v4.pdf
+https://arxiv.org/ftp/arxiv/papers/2004/2004.00993.pdf
